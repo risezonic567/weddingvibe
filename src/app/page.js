@@ -1,69 +1,18 @@
-import Image from "next/image";
+import Link from 'next/link';
+import { cities, venues, services, weddings, testimonials, faqs } from '@/data/site';
+import { ImageBox, VenueCard, BudgetPlanner } from '@/components/Site';
+import ServicesScroll from '@/components/ServicesScroll';
 
-export default function Home() {
-  return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.js
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
-}
+export default function Home(){return <>
+<section className="hero"><div className="wrap hero-grid"><div><p className="eyebrow">YOUR DAY, BEAUTIFULLY PLANNED</p><h1>Find the place<br/>your forever begins.</h1><p className="hero-copy">Thoughtful wedding venues and trusted teams, brought together around the celebration you imagine.</p><div className="actions"><Link className="btn" href="/venues">Explore venues</Link><Link className="text-link" href="/services">Discover services →</Link></div><div className="hero-proof"><strong>8 cities</strong><span>·</span><strong>24 handpicked venues</strong><span>·</span><strong>One helpful planner</strong></div></div><ImageBox image="im2.svg" className="hero-photo" alt="A grand palace wedding venue"/></div></section>
+<section className="sec"><div className="wrap center"><h2 className="h2">Any location in mind?</h2><p className="sub">A beautiful beginning, wherever your story takes you.</p><div className="arches">{cities.map((c,i)=><Link className="arch-item" href={`/wedding-venues-in-${c.slug}`} key={c.slug}><span className="arch"><span className="landmark">{['⌂','◇','⌖','⌁','⌗','⌂','◇','⌖'][i]}</span></span><strong>{c.name}</strong><small>{c.landmark}</small></Link>)}</div></div></section>
+<section className="sec cream"><div className="wrap"><div className="section-head"><div><h2 className="h2">Featured venues</h2><p className="sub">Spaces with a little extra magic.</p></div><Link className="text-link" href="/venues">Explore all venues →</Link></div><div className="grid venue-grid">{venues.filter(v=>v.featured).slice(0,3).map(v=><VenueCard venue={v} key={v.slug}/>)}</div></div></section>
+<section className="sec"><div className="wrap"><h2 className="h2">A setting for every kind of celebration</h2><p className="sub">Find the atmosphere that feels like you.</p><div className="type-grid">{[['Banquet halls','im1.svg'],['Palace venues','im2.svg'],['Garden & farmhouse','im3.svg'],['Beach celebrations','im4.svg']].map(([x,img])=><Link href="/venues" key={x}><ImageBox image={img} alt={x}/><strong>{x} ↗</strong></Link>)}</div></div></section>
+<section className="sec cream"><div className="wrap"><div className="section-head"><div><h2 className="h2">The people behind the moments</h2><p className="sub">Meet the trusted wedding teams who make it all come together.</p></div><Link href="/services" className="text-link">Explore services →</Link></div><ServicesScroll/></div></section>
+<section className="sec"><div className="wrap"><h2 className="h2">How it works</h2><p className="sub">A few thoughtful steps, and you’re on your way.</p><div className="hw">{[['01','Tell us your plans','Share your date, city and guest count.'],['02','Explore your shortlist','We’ll match you with places and people.'],['03','Visit and personalise','Compare options and tailor the details.'],['04','Celebrate your way','Your planner is here as the day unfolds.']].map(([n,t,d])=><article className="hw-card" key={n}><span className="hw-num">{n}</span><h3>{t}</h3><p>{d}</p></article>)}</div></div></section>
+<section className="sec cream"><div className="wrap budget"><div><p className="eyebrow">A HELPFUL FIRST STEP</p><h2 className="h2">Plan a budget that feels right.</h2><p className="sub">Start with your guest count, city and a comfortable budget. We’ll help make a plan that works for you.</p><BudgetPlanner/></div><ImageBox image="im8.svg" className="budget-photo" alt="Wedding catering"/></div></section>
+<section className="sec"><div className="wrap"><div className="section-head"><div><h2 className="h2">Real love, real celebrations</h2><p className="sub">A few stories from couples who planned with us.</p></div><Link href="/real-weddings" className="text-link">See all stories →</Link></div><div className="grid story-grid">{weddings.slice(0,3).map(w=><Link className="card" href={`/real-weddings/${w.slug}`} key={w.slug}><ImageBox image={w.images[0]}/><div className="cardbody"><h3>{w.couple}</h3><p>{w.title} · {w.city}</p></div></Link>)}</div></div></section>
+<section className="sec cream"><div className="wrap why"><ImageBox image="im11.svg" alt="Newlyweds celebrating"/><div><p className="eyebrow">WHY WEDDINGSVIBE</p><h2 className="h2">One less thing to worry about.</h2><p className="sub">Good planning starts with listening. We bring trusted venues, thoughtful vendors and a real person to help you move forward.</p><ul className="check-list"><li>Vetted venues and service partners</li><li>Clear quotes with inclusions spelled out</li><li>A personal planner from shortlist to celebration</li></ul><Link href="/about" className="text-link">Get to know us →</Link></div></div></section>
+<section className="sec"><div className="wrap"><h2 className="h2">Kind words from our couples</h2><p className="sub">A little reassurance from those who have been there.</p><div className="grid testimonial-grid">{testimonials.map(t=><article className="quote card" key={t.name}><div className="stars">★★★★★</div><p>“{t.quote}”</p><strong>{t.name}</strong></article>)}</div><div className="faq-wrap"><h2 className="h2">A few things you might be wondering</h2>{faqs.slice(0,5).map(([q,a])=><details className="faq" key={q}><summary>{q}</summary><p>{a}</p></details>)}</div></div></section>
+<section className="final-cta"><div className="wrap"><p className="eyebrow">LET’S MAKE A START</p><h2>Your day deserves a little help.</h2><p>Tell us your date and city. We’ll help with the shortlisting.</p><div className="actions"><Link href="/contact" className="btn">Start planning</Link><a href="https://wa.me/910000000000" className="btn btn-light">Chat on WhatsApp</a></div></div></section>
+</>}

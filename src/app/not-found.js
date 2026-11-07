@@ -1,0 +1,1 @@
+import Link from 'next/link';export default function NotFound(){return <section className="sec"><div className="wrap center"><p className="eyebrow">404 · PAGE NOT FOUND</p><h1 className="h2">This page wandered off.</h1><p className="sub">Let’s find your way back to a beautiful beginning.</p><Link className="btn" href="/">Back to weddingsvibe</Link></div></section>}

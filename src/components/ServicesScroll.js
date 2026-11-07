@@ -1,0 +1,6 @@
+'use client';
+import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { services } from '@/data/site';
+import { ImageBox } from '@/components/Site';
+export default function ServicesScroll(){const [active,setActive]=useState(0);const refs=useRef([]);useEffect(()=>{const observer=new IntersectionObserver(entries=>{const visible=entries.filter(x=>x.isIntersecting).sort((a,b)=>Math.abs(a.boundingClientRect.top+a.boundingClientRect.height/2-window.innerHeight/2)-Math.abs(b.boundingClientRect.top+b.boundingClientRect.height/2-window.innerHeight/2));if(visible[0])setActive(Number(visible[0].target.dataset.index))},{rootMargin:'-35% 0px -35% 0px',threshold:0});refs.current.forEach(node=>node&&observer.observe(node));return()=>observer.disconnect()},[]);return <div className="svc-home"><div>{services.map((s,i)=><article ref={el=>refs.current[i]=el} data-index={i} className="svc-item" key={s.slug}><span className="eyebrow">0{i+1}</span><h3>{s.name}</h3><p>{s.description}</p><Link href={`/services/${s.slug}`} className="text-link">Explore service →</Link></article>)}</div><div className="svc-photo-stack">{services.map((s,i)=><ImageBox key={s.slug} image={s.image} className={`svc-photo ${i===active?'visible':''}`} alt={s.name}/>)}</div></div>}
