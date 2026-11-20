@@ -3,6 +3,12 @@ const nextConfig = {
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  async rewrites() {
+    return [
+      { source: '/wedding-venues-in-:city', destination: '/wedding-venues-in/:city' },
+      { source: '/wedding-venues-in-:city/:area', destination: '/wedding-venues-in/:city/:area' },
+    ]
+  },
   turbopack: {
     rules: {
       "*.css": {
