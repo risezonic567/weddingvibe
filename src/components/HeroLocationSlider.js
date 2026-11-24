@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 
 // Swap these paths and details to feature your own verified wedding venues.
-// The current paths use the site's local demo artwork, so the slider works out of the box.
+// The wide editorial views can be swapped for your own venue photographs.
 const HERO_SLIDES = [
   { image: 'https://images.unsplash.com/photo-1744805624954-a6686543c3ff?auto=format&fit=crop&w=1800&q=85', location: 'Mumbai, India', pricePerPlate: '₹1,800 - ₹3,500 per plate', photoCount: '15+ more photos' },
   { image: 'https://images.unsplash.com/photo-1774024333427-f1bf80d0e3c4?auto=format&fit=crop&w=1800&q=85', location: 'Udaipur, India', pricePerPlate: '₹2,500 - ₹5,000 per plate', photoCount: '18+ more photos' },

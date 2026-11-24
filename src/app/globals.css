@@ -14,13 +14,13 @@
 .nav-dd-trigger{display:inline-flex;align-items:center;gap:5px;line-height:1}.dd-caret{display:block;width:11px;height:11px;flex-shrink:0;margin-top:1px;opacity:.75;transition:transform .25s cubic-bezier(.22,1,.36,1),opacity .2s ease}.dd:hover .dd-caret,.dd:focus-within .dd-caret{transform:rotate(180deg);opacity:1}
 
 /* Home page wedding hero and warm champagne navigation treatment. */
-.header{background:linear-gradient(105deg,#FAF6EE 0%,#F5EBD9 55%,#EFE4CE 100%);border-bottom:1px solid #D8C39E;box-shadow:0 5px 22px #6f54251a}
+.header{background:#FDFCFA;border-bottom:1px solid #EAE4D8;box-shadow:0 5px 22px #6f54251a}
 .navrow{min-height:92px;padding-top:12px;padding-bottom:12px}
 .nav{gap:30px}
 .nav>div>a{transition:color .2s ease}
 .header .plan{min-height:48px;padding:0 23px;color:#fff8e9;background:linear-gradient(145deg,#C7A45F,#8F6B2E);border:1px solid #D8BD7E;box-shadow:0 5px 12px #80602c40,inset 0 1px #f8e7b4a8}
 .header .plan:hover{background:linear-gradient(145deg,#D1B170,#987437);color:white;transform:translateY(-1px)}
-.home-hero{position:relative;isolation:isolate;overflow:hidden;padding:70px 0 76px;background:radial-gradient(ellipse at 86% 47%,#EADBC0 0%,#F2E8D5 34%,transparent 68%),linear-gradient(112deg,#FAF6EE 0%,#F8F3E9 52%,#EADBC0 100%)}
+.home-hero{position:relative;isolation:isolate;overflow:hidden;padding:70px 0 76px;background:radial-gradient(ellipse at 86% 47%,#FAF8F4 0%,#FCFAF7 40%,transparent 68%),linear-gradient(112deg,#FCFAF7 0%,#FAF8F4 100%)}
 .home-hero:before{content:"";position:absolute;z-index:-1;width:36rem;height:36rem;left:-19rem;bottom:-27rem;border-radius:50%;background:#D6B77955;filter:blur(28px)}
 .home-hero-grid{grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);gap:54px}
 .home-hero-content{position:relative;z-index:1}
@@ -61,3 +61,28 @@
 .services-page .service-chips .chip:hover{border-color:#133E37;background:#EFE6D5;color:#133E37}
 .services-page .service-chips .chip.active{border-color:#133E37;background:#133E37;color:#fff;box-shadow:0 3px 9px #133e3730}
 @media(max-width:700px){.services-page .service-chips .wrap{flex-wrap:nowrap;overflow-x:auto;padding-bottom:7px;scrollbar-width:thin}.services-page .service-chips .chip{flex:0 0 auto}}
+
+.location-thumb{display:inline-block;flex:0 0 26px;width:26px;height:26px;border-radius:50%;background-color:#E8DDC7;background-size:cover;background-position:center;border:1px solid #fff;box-shadow:0 1px 4px #392b1526;vertical-align:middle}
+.city>a{gap:9px}.city>a>.location-thumb{width:24px;height:24px;flex-basis:24px}.city>a>span:not(.location-thumb){flex:1;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mobile-cities .chip{gap:7px}
+.arch{position:relative;overflow:hidden;border:1px solid #D9D3C6;box-shadow:none}
+.arch .arch-photo{position:absolute;inset:0;width:100%;height:100%;flex-basis:auto;border:0;border-radius:inherit;box-shadow:none;background-position:center;background-size:cover;transition:transform .5s ease}
+.arch-item:hover .arch-photo,.arch-item:focus-visible .arch-photo{transform:scale(1.05)}
+.venue-location{display:flex;align-items:center;gap:7px;line-height:1.4!important}
+.filter-city-heading{display:inline-flex;align-items:center;gap:7px;min-height:28px;color:var(--muted)}
+.hw-cta .btn,.final-cta .btn{background:linear-gradient(140deg,#C8A45D,#8C682B);border:1px solid #D6B96F;color:#fff9eb;box-shadow:0 5px 13px #76551e35,inset 0 1px #f7e5b180}
+.hw-cta .btn:hover,.final-cta .btn:hover{background:linear-gradient(140deg,#D3B271,#997538);color:#fff;transform:translateY(-1px)}
+.hw-cta .btn-light,.final-cta .btn-light{background:#F8F1E4;color:#263B35;border:1px solid #D8C39E;box-shadow:0 3px 9px #76551e16}
+.hw-cta .btn-light:hover,.final-cta .btn-light:hover{background:#EFE4CE;color:#133E37}
+
+/* Venue mega menu alignment, interaction state, and card text rhythm. */
+.dd{position:static}
+.mega{left:50%;right:auto;width:min(1200px,calc(100vw - 48px));transform:translate(-50%,-6px)}
+.dd.is-open .mega{visibility:visible;opacity:1;transform:translate(-50%,0);pointer-events:auto}
+.mega::before{content:"";position:absolute;top:-12px;left:0;right:0;height:12px}
+.vg{align-items:start;grid-template-columns:repeat(3,minmax(0,1fr))}
+.vc{min-width:0}
+.vc strong{min-height:2.6em;font-size:14px;line-height:1.3;overflow-wrap:anywhere}
+.vc small{display:block;margin-top:5px;font-size:12px;line-height:1.45;white-space:normal}
+@media(max-width:700px){.mega{left:auto;right:auto;width:auto}}
+.dd:not(.is-open):hover .mega,.dd:not(.is-open):focus-within .mega{visibility:hidden;opacity:0;transform:translate(-50%,-6px);pointer-events:none}
