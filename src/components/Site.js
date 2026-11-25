@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { cities, site, venues } from '@/data/site';
@@ -43,7 +43,10 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [venuesOpen, setVenuesOpen] = useState(false);
   const [activeCity, setActiveCity] = useState(cities[0].slug);
+  const [activeVenueType, setActiveVenueType] = useState('');
   const [scrolled, setScrolled] = useState(false);
+  const navShellRef = useRef(null);
+  const closeTimer = useRef(null);
 
   const pathname = usePathname();
   const isHome = pathname === '/';
@@ -58,12 +61,32 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    function closeOnEscape(event) {
-      if (event.key === 'Escape') setVenuesOpen(false);
+    function closeOnOutsideClick(event) {
+      if (!navShellRef.current?.contains(event.target)) setVenuesOpen(false);
     }
+    function closeOnEscape(event) {
+      if (event.key === 'Escape') {
+        setVenuesOpen(false);
+        setOpen(false);
+      }
+    }
+    document.addEventListener('pointerdown', closeOnOutsideClick);
     window.addEventListener('keydown', closeOnEscape);
-    return () => window.removeEventListener('keydown', closeOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutsideClick);
+      window.removeEventListener('keydown', closeOnEscape);
+      window.clearTimeout(closeTimer.current);
+    };
   }, []);
+
+  function cancelClose() {
+    window.clearTimeout(closeTimer.current);
+  }
+
+  function scheduleClose() {
+    window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setVenuesOpen(false), 120);
+  }
 
   return (
     <header
@@ -73,182 +96,141 @@ export function Header() {
         (isHome && !scrolled ? ' header-transparent' : '')
       }
     >
-      <div className="wrap navrow">
-        <Brand />
+      <div className="nav-shell" ref={navShellRef}>
+        <div className="wrap navrow">
+          <Brand />
+          <button
+            className="hamb"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+          >
+            {open ? '\u00d7' : '\u2630'}
+          </button>
 
-        <button
-          className="hamb"
-          aria-label={open ? 'Close menu' : 'Open menu'}
-          aria-expanded={open}
-          onClick={() => setOpen(!open)}
-        >
-          {open ? '×' : '☰'}
-        </button>
-
-        <nav className={open ? 'nav open' : 'nav'}>
-          {site.nav.map((n) => {
-            const isVenues = n.label === 'Venues';
-
-            return (
-              <div
-                className={isVenues ? `dd${venuesOpen ? ' is-open' : ''}` : ''}
-                key={n.href}
-                onMouseEnter={isVenues ? () => setVenuesOpen(true) : undefined}
-                onMouseLeave={isVenues ? () => setVenuesOpen(false) : undefined}
-                onFocus={isVenues ? () => setVenuesOpen(true) : undefined}
-                onBlur={
-                  isVenues
-                    ? (event) => {
-                        if (!event.currentTarget.contains(event.relatedTarget)) {
-                          setVenuesOpen(false);
-                        }
-                      }
-                    : undefined
-                }
-              >
-                <Link
-                  href={n.href}
-                  className={isVenues ? 'nav-dd-trigger' : undefined}
-                  aria-expanded={isVenues ? venuesOpen : undefined}
-                  aria-haspopup={isVenues ? 'true' : undefined}
-                  onClick={
-                    isVenues
-                      ? (event) => {
-                          if (window.matchMedia('(max-width: 700px)').matches) return;
-                          event.preventDefault();
-                          setVenuesOpen(true);
-                        }
-                      : undefined
-                  }
-                >
-                  {n.label}
-                  {isVenues && (
-                    <svg
-                      className="dd-caret"
-                      width="11"
-                      height="11"
-                      viewBox="0 0 12 12"
-                      aria-hidden="true"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.75"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+          <nav className={open ? 'nav open' : 'nav'} aria-label="Main navigation">
+            <ul className="desktop-nav list-none m-0 p-0">
+              {site.nav.map((item) => {
+                const isVenues = item.label === 'Venues';
+                return (
+                  <li
+                    key={item.href}
+                    className={isVenues ? 'dd' : ''}
+                    onMouseEnter={isVenues ? () => { cancelClose(); setVenuesOpen(true); } : undefined}
+                    onMouseLeave={isVenues ? scheduleClose : undefined}
+                    onFocus={isVenues ? () => setVenuesOpen(true) : undefined}
+                  >
+                    <Link
+                      href={item.href}
+                      className={isVenues ? 'nav-dd-trigger' : undefined}
+                      aria-expanded={isVenues ? venuesOpen : undefined}
+                      aria-haspopup={isVenues ? 'true' : undefined}
+                      onClick={isVenues ? (event) => {
+                        if (window.matchMedia('(max-width: 1023px)').matches) return;
+                        event.preventDefault();
+                        cancelClose();
+                        setVenuesOpen(true);
+                      } : undefined}
                     >
-                      <path d="M2.5 4.5 6 8l3.5-3.5" />
-                    </svg>
-                  )}
-                </Link>
+                      {item.label}
+                      {isVenues && <svg className="dd-caret" width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 4.5 6 8l3.5-3.5" /></svg>}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
 
-                {isVenues && (
-                  <div
-                    className="mega"
-                    onClick={(event) => {
-                      if (event.target.closest('a')) setVenuesOpen(false);
-                    }}
-                  >
-                    <div className="wrap">
-                      <div className="mbox">
-                        <div className="mega-content">
-                          <ul className="cities">
-                            {cities.map((city) => (
-                              <li
-                                className={`city${activeCity === city.slug ? ' is-active' : ''}`}
-                                key={city.slug}
-                                onMouseEnter={() => setActiveCity(city.slug)}
-                                onFocus={() => setActiveCity(city.slug)}
-                              >
-                                <Link href={`/wedding-venues-in/${city.slug}`}>
-                                  <LocationThumb cityName={city.name} />
-                                  <span className="city-name">{city.name}</span>
-                                  <small>{venuesByCity[city.slug].length} venues</small>
-                                </Link>
-                              </li>
-                            ))}
-                          </ul>
-
-                          <div className="cp">
-                            <div className="chd">
-                              <h3>Wedding venues in {selectedCity.name}</h3>
-                              <Link
-                                className="underline"
-                                href={`/wedding-venues-in/${selectedCity.slug}`}
-                              >
-                                View all
-                              </Link>
-                            </div>
-
-                            <div className="vg">
-                              {selectedVenues.slice(0, 3).map((venue) => (
-                                <Link
-                                  className="vc"
-                                  href={`/venues/${venue.citySlug}/${venue.slug}`}
-                                  key={venue.slug}
-                                >
-                                  <div
-                                    className="ph"
-                                    role="img"
-                                    aria-label={venue.name}
-                                    style={{
-                                      height: 110,
-                                      borderRadius: 12,
-                                      backgroundImage: `url("${venue.images[0]}")`,
-                                    }}
-                                  />
-                                  <strong>{venue.name}</strong>
-                                  <small>
-                                    {venue.area} <span aria-hidden="true">•</span> ₹
-                                    {venue.pricePerPlate.toLocaleString('en-IN')}/plate
-                                  </small>
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="mfoot">
-                          <span>Browse by type</span>
-                          {venueTypes.map((type) => (
-                            <Link className="chip" href="/venues" key={type}>
-                              {type}
-                            </Link>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
-          <div className="mobile-cities">
-            <details>
-              <summary>Browse venues by city</summary>
-              <div className="chips">
-                {cities.map((city) => (
-                  <Link
-                    className="chip"
-                    key={city.slug}
-                    href={`/wedding-venues-in/${city.slug}`}
-                  >
+            <div className="mobile-venue-accordion">
+              <p>Browse venues by city</p>
+              {cities.map((city) => (
+                <details key={city.slug}>
+                  <summary>
                     <LocationThumb cityName={city.name} />
-                    {city.name}
-                  </Link>
-                ))}
-              </div>
-            </details>
-          </div>
-        </nav>
+                    <span>{city.name}</span>
+                    <small>{venuesByCity[city.slug].length} venues</small>
+                  </summary>
+                  <div className="mobile-venue-links">
+                    <Link href={`/wedding-venues-in/${city.slug}`}>View all in {city.name} →</Link>
+                    {venuesByCity[city.slug].map((venue) => (
+                      <Link key={venue.slug} href={`/venues/${venue.citySlug}/${venue.slug}`}>
+                        <span>{venue.name}</span>
+                        <small>{venue.area} · ₹{venue.pricePerPlate.toLocaleString('en-IN')}/plate</small>
+                      </Link>
+                    ))}
+                  </div>
+                </details>
+              ))}
+            </div>
+          </nav>
 
-        <Link className="btn plan" href="/contact">
-          Plan my wedding
-        </Link>
+          <Link className="btn plan" href="/contact">Plan my wedding</Link>
+        </div>
+
+        <div
+          className={`mega${venuesOpen ? ' is-open' : ''}`}
+          aria-hidden={!venuesOpen}
+          onMouseEnter={cancelClose}
+          onMouseLeave={scheduleClose}
+          onClick={(event) => {
+            if (event.target.closest('a')) setVenuesOpen(false);
+          }}
+        >
+          <div className="wrap">
+            <div className="mbox">
+              <div className="mega-content">
+                <ul className="cities list-none m-0 p-0">
+                  {cities.map((city) => (
+                    <li
+                      className={`city${activeCity === city.slug ? ' is-active' : ''}`}
+                      key={city.slug}
+                      onMouseEnter={() => setActiveCity(city.slug)}
+                      onFocus={() => setActiveCity(city.slug)}
+                    >
+                      <Link href={`/wedding-venues-in/${city.slug}`}>
+                        <LocationThumb cityName={city.name} />
+                        <span className="city-name">{city.name}</span>
+                        <small>{venuesByCity[city.slug].length} venues</small>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                <div className="cp">
+                  <div className="chd">
+                    <div>
+                      <h3>Wedding venues in {selectedCity.name}</h3>
+                      <p>{selectedVenues.length} handpicked venues · Starting from ₹{Math.min(...selectedVenues.map((venue) => venue.pricePerPlate)).toLocaleString('en-IN')}/plate</p>
+                    </div>
+                    <Link className="underline" href={`/wedding-venues-in/${selectedCity.slug}`}>View all in {selectedCity.name} <span aria-hidden="true">→</span></Link>
+                  </div>
+                  <div className="vg city-venues-panel" key={selectedCity.slug}>
+                    {selectedVenues.slice(0, 3).map((venue) => (
+                      <Link className="vc" href={`/venues/${venue.citySlug}/${venue.slug}`} key={venue.slug}>
+                        <div className="vc-image">
+                          <Image src={venue.images[0]} alt={venue.name} fill sizes="(max-width: 1023px) 30vw, 260px" />
+                          <span className="vc-type-badge">{venue.type.charAt(0).toUpperCase() + venue.type.slice(1)}</span>
+                        </div>
+                        <strong>{venue.name}</strong>
+                        <small>{venue.area}{venue.capacity?.min && venue.capacity?.max ? ` · ${venue.capacity.min}–${venue.capacity.max} guests` : ''}</small>
+                        <b className="vc-price">₹{venue.pricePerPlate.toLocaleString('en-IN')}/plate</b>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="mfoot">
+                <span>Browse by type</span>
+                {venueTypes.map((type) => (
+                  <Link className={`chip${activeVenueType === type ? ' active' : ''}`} href="/venues" key={type} onClick={() => setActiveVenueType(type)}>{type}</Link>
+                ))}
+                <Link className="mega-explore-all" href="/venues">Explore all venues <span aria-hidden="true">→</span></Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
   );
 }
-
 function SocialIcon({ type }) {
   if (type === 'Instagram') {
     return (

@@ -4,25 +4,17 @@ import { ImageBox, VenueCard, BudgetPlanner } from '@/components/Site';
 import LocationThumb from '@/components/LocationThumb';
 import { weddingImages } from '@/data/wedding-images';
 import HeroLocationSlider from '@/components/HeroLocationSlider';
+import About from '@/components/About';
 import ServicesScroll from '@/components/ServicesScroll';
 
 export const metadata = { title: 'Wedding venues and services across India', description: 'Compare verified wedding venues, check prices per plate and connect with trusted wedding teams across India.' };
 
 export default function Home() {
   return <>
-    <section className="home-hero">
-      <HeroLocationSlider />
-      <div className="wrap home-hero-grid">
-        <div className="home-hero-content">
-          <h1>Find the venue that feels like your wedding.</h1>
-          <p className="home-hero-copy">Compare verified venues, check prices per plate and send one enquiry. No endless calls.</p>
-          <div className="actions">
-            <Link className="btn hero-primary" href="/venues">Explore venues</Link>
-            <Link className="btn btn-outline hero-secondary" href="/contact">Plan my wedding</Link>
-          </div>
-        </div>
-      </div>
-    </section>
+    <HeroLocationSlider />
+    <About/>
+
+
     <section className="sec">
       <div className="wrap center">
         <h2 className="h2">Any location in mind?</h2>
