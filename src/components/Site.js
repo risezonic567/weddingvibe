@@ -1,38 +1,643 @@
 'use client';
+
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { cities, site, venues } from '@/data/site';
 import { weddingImages } from '@/data/wedding-images';
 import LocationThumb from '@/components/LocationThumb';
 
-function Brand({footer=false}){return <Link className={footer?'brand brand-footer':'brand'} href="/" aria-label="Weddings Vibe home">{footer?<Image src="/images/logo.png" alt="Weddings Vibe" width={360} height={360}/>:<><Image src="/images/logo-icon.png" alt="" width={54} height={54}/><span>WEDDINGS VIBE</span></>}</Link>}
-export function Header(){
-  const [open,setOpen]=useState(false);
-  const [venuesOpen,setVenuesOpen]=useState(false);
+function Brand({ footer = false }) {
+  return (
+    <Link
+      className={footer ? 'brand brand-footer' : 'brand'}
+      href="/"
+      aria-label="Weddings Vibe home"
+    >
+      {footer ? (
+        <Image src="/images/logo.png" alt="Weddings Vibe" width={360} height={360} />
+      ) : (
+        <>
+          <Image src="/images/logo-icon.png" alt="" width={54} height={54} />
+          <span>WEDDINGS VIBE</span>
+        </>
+      )}
+    </Link>
+  );
+}
 
-  useEffect(()=>{
-    function closeOnEscape(event){
-      if(event.key==='Escape') setVenuesOpen(false);
+const venuesByCity = Object.fromEntries(
+  cities.map((city) => [city.slug, venues.filter((venue) => venue.citySlug === city.slug)])
+);
+
+const venueTypes = [
+  'Banquet halls',
+  'Resorts',
+  'Farmhouses',
+  'Palaces',
+  'Beach venues',
+];
+
+export function Header() {
+  const [open, setOpen] = useState(false);
+  const [venuesOpen, setVenuesOpen] = useState(false);
+  const [activeCity, setActiveCity] = useState(cities[0].slug);
+  const [scrolled, setScrolled] = useState(false);
+
+  const pathname = usePathname();
+  const isHome = pathname === '/';
+  const selectedCity = cities.find((city) => city.slug === activeCity) || cities[0];
+  const selectedVenues = venuesByCity[selectedCity.slug] || [];
+
+  useEffect(() => {
+    const updateScroll = () => setScrolled(window.scrollY > 24);
+    updateScroll();
+    window.addEventListener('scroll', updateScroll, { passive: true });
+    return () => window.removeEventListener('scroll', updateScroll);
+  }, []);
+
+  useEffect(() => {
+    function closeOnEscape(event) {
+      if (event.key === 'Escape') setVenuesOpen(false);
     }
-    window.addEventListener('keydown',closeOnEscape);
-    return ()=>window.removeEventListener('keydown',closeOnEscape);
-  },[]);
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, []);
 
-  return <header className="header"><div className="wrap navrow"><Brand/><button className="hamb" aria-label={open?'Close menu':'Open menu'} aria-expanded={open} onClick={()=>setOpen(!open)}>{open?'×':'☰'}</button><nav className={open?'nav open':'nav'}>{site.nav.map(n=>{
-    const isVenues=n.label==='Venues';
-    return <div className={isVenues?`dd${venuesOpen?' is-open':''}`:''} key={n.href} onMouseEnter={isVenues?()=>setVenuesOpen(true):undefined} onMouseLeave={isVenues?()=>setVenuesOpen(false):undefined} onFocus={isVenues?()=>setVenuesOpen(true):undefined} onBlur={isVenues?event=>{if(!event.currentTarget.contains(event.relatedTarget)) setVenuesOpen(false);}:undefined}>
-      <Link href={n.href} className={isVenues?'nav-dd-trigger':undefined} aria-expanded={isVenues?venuesOpen:undefined} aria-haspopup={isVenues?'true':undefined} onClick={isVenues?event=>{
-        if(window.matchMedia('(max-width: 700px)').matches) return;
-        event.preventDefault();setVenuesOpen(true);
-      }:undefined}>{n.label}{isVenues&&<svg className="dd-caret" width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 4.5 6 8l3.5-3.5"/></svg>}</Link>
-      {isVenues&&<div className="mega" onClick={event=>{if(event.target.closest('a')) setVenuesOpen(false);}}><div className="wrap"><div className="mbox"><ul className="cities">{cities.map(c=><li className="city" key={c.slug}><Link href={`/wedding-venues-in/${c.slug}`}><LocationThumb cityName={c.name}/><span>{c.name}<small>{venues.filter(v=>v.city===c.name).length} venues</small></span></Link><div className="cp"><div className="chd"><h3>Wedding venues in {c.name}</h3><Link className="underline" href={`/wedding-venues-in/${c.slug}`}>View all</Link></div><div className="vg">{venues.filter(v=>v.city===c.name).slice(0,3).map(v=><Link className="vc" href={`/venues/${v.citySlug}/${v.slug}`} key={v.slug}><div className="ph" style={{height:110,borderRadius:12,backgroundImage:`url("${v.images[0]}")`}}/><strong>{v.name}</strong><small>{v.area} · ₹{v.pricePerPlate.toLocaleString('en-IN')}/plate</small></Link>)}</div></div></li>)}</ul><div className="mfoot"><span>Browse by type</span>{['Banquet halls','Resorts','Farmhouses','Palaces','Beach venues'].map(x=><Link className="chip" href="/venues" key={x}>{x}</Link>)}</div></div></div></div>}
-    </div>;
-  })}<div className="mobile-cities"><details><summary>Browse venues by city</summary><div className="chips">{cities.map(c=><Link className="chip" key={c.slug} href={`/wedding-venues-in/${c.slug}`}><LocationThumb cityName={c.name}/>{c.name}</Link>)}</div></details></div></nav><Link className="btn plan" href="/contact">Plan my wedding</Link></div></header>
-}function SocialIcon({type}){if(type==='Instagram')return <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor"/></svg>;if(type==='LinkedIn')return <svg viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M4 9h3v11H4zM5.5 4a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zM10 9h3v1.6c.5-1 1.7-1.9 3.3-1.9 3 0 3.7 2 3.7 4.6V20h-3v-5.8c0-1.4-.1-2.7-1.8-2.7s-2 1.2-2 2.6V20h-3z"/></svg>;if(type==='YouTube')return <svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4"/><path fill="currentColor" stroke="none" d="m10 9 5 3-5 3z"/></svg>;return <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m11 17 1.5-6.5m-2.5 3c-.5-2.5 1-4.5 3-4.5 1.8 0 2.8 1.3 2.5 3s-1.4 2.8-2.8 2.5"/></svg>}
-export function Footer(){return <footer className="ft"><div className="wrap"><div className="footer-grid"><div><Brand footer/><p>{site.tagline}</p></div><div><h4>Contact</h4><p>{site.address}</p><div className="ft-links"><a href={`tel:${site.phoneLink}`}>Call: {site.phone}</a><a href={`tel:${site.phoneLink2}`}>Call: {site.phone2}</a><a href={`mailto:${site.email}`}>{site.email}</a><a href={`https://maps.google.com/?q=${encodeURIComponent(site.mapsQuery)}`}>Get directions</a></div><p className="hours">{site.hours}</p></div><div><div className="qr"><div className="qrbox"><span>W</span></div><div>Scan to follow us on Instagram</div><strong>{site.instagram}</strong></div></div><div><h4>Follow us</h4><div className="soc">{Object.entries(site.socials).map(([name,url])=><a key={name} href={url} aria-label={name}><SocialIcon type={name==='instagram'?'Instagram':name==='linkedin'?'LinkedIn':name==='youtube'?'YouTube':'Pinterest'}/></a>)}</div><a className="btn" href={`https://wa.me/${site.whatsapp}`}>Chat on WhatsApp</a></div></div><div className="foot-bottom"><span>© 2026 Weddings Vibe. All rights reserved. · <Link href="/privacy-policy">Privacy</Link> · <Link href="/terms">Terms</Link></span><Link className="totop" href="/" aria-label="Back to home">↑</Link></div></div></footer>}
-export function Shell({children}){return <><Header/><main>{children}</main><Footer/><a className="wa-float" aria-label="Chat on WhatsApp" href={`https://wa.me/${site.whatsapp}`}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z"/><path d="M9 8.5c.3 2.6 2 4.4 4.7 5.2l1.1-1.1 2 .9c-.2 1.2-1.2 1.8-2.4 1.7-3.6-.4-6.7-3.4-7-6.8-.1-1.2.5-2.2 1.5-2.4l1 2z"/></svg></a></>}
-export function ImageBox({image=weddingImages.couple,className='',alt=''}){const isRemote=image.startsWith('https://');return <div role="img" aria-label={alt} className={`ph ${isRemote?'':image.replace('.svg','')} ${className}`} style={isRemote?{backgroundImage:`url("${image}")`}:undefined}/>}
-export function VenueCard({venue,image=venue.images[0]}){return <Link href={`/venues/${venue.citySlug}/${venue.slug}`} className="card"><ImageBox image={image} alt={venue.name}/><div className="cardbody"><div className="rating">★ {venue.rating} <span>({venue.reviewCount} reviews)</span></div><h3>{venue.name}</h3><p className="venue-location"><LocationThumb cityName={venue.city}/>{venue.area}, {venue.city} · {venue.capacity.max} guests</p><strong>₹{venue.pricePerPlate.toLocaleString('en-IN')} <small>/ plate</small></strong></div></Link>}
-export function EnquiryForm({type='contact',subject='',slug='',compact=false}){const [status,setStatus]=useState(''),[city,setCity]=useState('');async function submit(e){e.preventDefault();const form=e.currentTarget;setStatus('Sending your enquiry…');const data=Object.fromEntries(new FormData(form));try{if(process.env.NEXT_PUBLIC_API_URL){const r=await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,type,subject,slug})});if(!r.ok)throw Error('Please try again in a moment.')}setStatus('Thank you! A wedding planner will be in touch shortly.');form.reset();setCity('')}catch{setStatus(`We could not send that just now. Please call us at ${site.phone}.`)}}return <form className={`form ${compact?'compact':''}`} onSubmit={submit}><h3>{subject||'Tell us about your wedding'}</h3><label>Your name<input name="name" required autoComplete="name"/></label><label>Phone number<input name="phone" type="tel" required autoComplete="tel" pattern="[+0-9 ()-]{8,}"/></label><label>Email address<input name="email" type="email" autoComplete="email"/></label><label><span className="filter-city-heading"><LocationThumb cityName={city||'India'}/>City</span><select name="city" value={city} onChange={e=>setCity(e.target.value)}><option value="">Choose a city</option>{cities.map(c=><option key={c.slug}>{c.name}</option>)}</select></label><label>Wedding date<input name="date" type="date"/></label><label>Guest count<input name="guests" type="number" min="1"/></label><label className="trap">Website<input name="website" tabIndex="-1" autoComplete="off"/></label><label>Tell us a little more<textarea name="message" rows="3"/></label><button className="btn" disabled={status.startsWith('Sending')}>Send enquiry</button>{status&&<p role="status">{status}</p>}</form>}
-export function BudgetPlanner(){const [step,setStep]=useState(false),[done,setDone]=useState(false),[plan,setPlan]=useState({guests:'150',budget:'',city:'Delhi NCR'}),[status,setStatus]=useState('');async function send(e){e.preventDefault();const form=e.currentTarget;const data={...Object.fromEntries(new FormData(form)),...plan};setStatus('Sending your plan…');try{if(process.env.NEXT_PUBLIC_API_URL){const r=await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...data,type:'budget-planner'})});if(!r.ok)throw Error()}setDone(true)}catch{setStatus(`We could not send that now. Please call us at ${site.phone}.`)}}const total=Number(plan.budget)||0;return <div className="budget-panel">{done?<><h3>Your celebration, thoughtfully divided</h3><div className="budget-split">{[['Food',40],['Decor',30],['Photography',20],['Flex fund',10]].map(([label,share])=><p key={label}>{label}<strong>{total?`₹${Math.round(total*share/100).toLocaleString('en-IN')}`:`${share}%`}</strong></p>)}</div><p>{plan.city} · {Number(plan.guests).toLocaleString('en-IN')} guests</p><p>We’ll be in touch to tailor this plan to your day.</p></>:step?<form className="form" onSubmit={send}><h3>Where can we send your plan?</h3><label>Your name<input name="name" required autoComplete="name"/></label><label>Phone number<input name="phone" required type="tel" pattern="[+0-9 ()-]{8,}" autoComplete="tel"/></label><label>Email address<input name="email" type="email"/></label><label className="trap">Website<input name="website" tabIndex="-1"/></label><button className="btn">Get my plan</button>{status&&<p role="status">{status}</p>}</form>:<form className="budget-form" onSubmit={e=>{e.preventDefault();setStep(true)}}><label>Guests<input type="number" min="1" required value={plan.guests} onChange={e=>setPlan({...plan,guests:e.target.value})}/></label><label>Budget<input type="number" min="1" required placeholder="₹" value={plan.budget} onChange={e=>setPlan({...plan,budget:e.target.value})}/></label><label><span className="filter-city-heading"><LocationThumb cityName={plan.city}/>City</span><select value={plan.city} onChange={e=>setPlan({...plan,city:e.target.value})}>{cities.map(c=><option key={c.slug}>{c.name}</option>)}</select></label><button className="btn">Show my plan</button></form>}</div>}
+  return (
+    <header
+      className={
+        'header' +
+        (isHome ? ' header-home' : '') +
+        (isHome && !scrolled ? ' header-transparent' : '')
+      }
+    >
+      <div className="wrap navrow">
+        <Brand />
+
+        <button
+          className="hamb"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? '×' : '☰'}
+        </button>
+
+        <nav className={open ? 'nav open' : 'nav'}>
+          {site.nav.map((n) => {
+            const isVenues = n.label === 'Venues';
+
+            return (
+              <div
+                className={isVenues ? `dd${venuesOpen ? ' is-open' : ''}` : ''}
+                key={n.href}
+                onMouseEnter={isVenues ? () => setVenuesOpen(true) : undefined}
+                onMouseLeave={isVenues ? () => setVenuesOpen(false) : undefined}
+                onFocus={isVenues ? () => setVenuesOpen(true) : undefined}
+                onBlur={
+                  isVenues
+                    ? (event) => {
+                        if (!event.currentTarget.contains(event.relatedTarget)) {
+                          setVenuesOpen(false);
+                        }
+                      }
+                    : undefined
+                }
+              >
+                <Link
+                  href={n.href}
+                  className={isVenues ? 'nav-dd-trigger' : undefined}
+                  aria-expanded={isVenues ? venuesOpen : undefined}
+                  aria-haspopup={isVenues ? 'true' : undefined}
+                  onClick={
+                    isVenues
+                      ? (event) => {
+                          if (window.matchMedia('(max-width: 700px)').matches) return;
+                          event.preventDefault();
+                          setVenuesOpen(true);
+                        }
+                      : undefined
+                  }
+                >
+                  {n.label}
+                  {isVenues && (
+                    <svg
+                      className="dd-caret"
+                      width="11"
+                      height="11"
+                      viewBox="0 0 12 12"
+                      aria-hidden="true"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.75"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M2.5 4.5 6 8l3.5-3.5" />
+                    </svg>
+                  )}
+                </Link>
+
+                {isVenues && (
+                  <div
+                    className="mega"
+                    onClick={(event) => {
+                      if (event.target.closest('a')) setVenuesOpen(false);
+                    }}
+                  >
+                    <div className="wrap">
+                      <div className="mbox">
+                        <div className="mega-content">
+                          <ul className="cities">
+                            {cities.map((city) => (
+                              <li
+                                className={`city${activeCity === city.slug ? ' is-active' : ''}`}
+                                key={city.slug}
+                                onMouseEnter={() => setActiveCity(city.slug)}
+                                onFocus={() => setActiveCity(city.slug)}
+                              >
+                                <Link href={`/wedding-venues-in/${city.slug}`}>
+                                  <LocationThumb cityName={city.name} />
+                                  <span className="city-name">{city.name}</span>
+                                  <small>{venuesByCity[city.slug].length} venues</small>
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+
+                          <div className="cp">
+                            <div className="chd">
+                              <h3>Wedding venues in {selectedCity.name}</h3>
+                              <Link
+                                className="underline"
+                                href={`/wedding-venues-in/${selectedCity.slug}`}
+                              >
+                                View all
+                              </Link>
+                            </div>
+
+                            <div className="vg">
+                              {selectedVenues.slice(0, 3).map((venue) => (
+                                <Link
+                                  className="vc"
+                                  href={`/venues/${venue.citySlug}/${venue.slug}`}
+                                  key={venue.slug}
+                                >
+                                  <div
+                                    className="ph"
+                                    role="img"
+                                    aria-label={venue.name}
+                                    style={{
+                                      height: 110,
+                                      borderRadius: 12,
+                                      backgroundImage: `url("${venue.images[0]}")`,
+                                    }}
+                                  />
+                                  <strong>{venue.name}</strong>
+                                  <small>
+                                    {venue.area} <span aria-hidden="true">•</span> ₹
+                                    {venue.pricePerPlate.toLocaleString('en-IN')}/plate
+                                  </small>
+                                </Link>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mfoot">
+                          <span>Browse by type</span>
+                          {venueTypes.map((type) => (
+                            <Link className="chip" href="/venues" key={type}>
+                              {type}
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          <div className="mobile-cities">
+            <details>
+              <summary>Browse venues by city</summary>
+              <div className="chips">
+                {cities.map((city) => (
+                  <Link
+                    className="chip"
+                    key={city.slug}
+                    href={`/wedding-venues-in/${city.slug}`}
+                  >
+                    <LocationThumb cityName={city.name} />
+                    {city.name}
+                  </Link>
+                ))}
+              </div>
+            </details>
+          </div>
+        </nav>
+
+        <Link className="btn plan" href="/contact">
+          Plan my wedding
+        </Link>
+      </div>
+    </header>
+  );
+}
+
+function SocialIcon({ type }) {
+  if (type === 'Instagram') {
+    return (
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="5" />
+        <circle cx="12" cy="12" r="4" />
+        <circle cx="17.2" cy="6.8" r="1" fill="currentColor" />
+      </svg>
+    );
+  }
+
+  if (type === 'LinkedIn') {
+    return (
+      <svg viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          stroke="none"
+          d="M4 9h3v11H4zM5.5 4a1.8 1.8 0 1 0 0 3.6 1.8 1.8 0 0 0 0-3.6zM10 9h3v1.6c.5-1 1.7-1.9 3.3-1.9 3 0 3.7 2 3.7 4.6V20h-3v-5.8c0-1.4-.1-2.7-1.8-2.7s-2 1.2-2 2.6V20h-3z"
+        />
+      </svg>
+    );
+  }
+
+  if (type === 'YouTube') {
+    return (
+      <svg viewBox="0 0 24 24">
+        <rect x="2" y="5" width="20" height="14" rx="4" />
+        <path fill="currentColor" stroke="none" d="m10 9 5 3-5 3z" />
+      </svg>
+    );
+  }
+
+  return (
+    <svg viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" />
+      <path d="m11 17 1.5-6.5m-2.5 3c-.5-2.5 1-4.5 3-4.5 1.8 0 2.8 1.3 2.5 3s-1.4 2.8-2.8 2.5" />
+    </svg>
+  );
+}
+
+export function Footer() {
+  return (
+    <footer className="ft">
+      <div className="wrap">
+        <div className="footer-grid">
+          <div>
+            <Brand footer />
+            <p>{site.tagline}</p>
+          </div>
+
+          <div>
+            <h4>Contact</h4>
+            <p>{site.address}</p>
+            <div className="ft-links">
+              <a href={`tel:${site.phoneLink}`}>Call: {site.phone}</a>
+              <a href={`tel:${site.phoneLink2}`}>Call: {site.phone2}</a>
+              <a href={`mailto:${site.email}`}>{site.email}</a>
+              <a href={`https://maps.google.com/?q=${encodeURIComponent(site.mapsQuery)}`}>
+                Get directions
+              </a>
+            </div>
+            <p className="hours">{site.hours}</p>
+          </div>
+
+          <div>
+            <div className="qr">
+              <div className="qrbox">
+                <span>W</span>
+              </div>
+              <div>Scan to follow us on Instagram</div>
+              <strong>{site.instagram}</strong>
+            </div>
+          </div>
+
+          <div>
+            <h4>Follow us</h4>
+            <div className="soc">
+              {Object.entries(site.socials).map(([name, url]) => (
+                <a
+                  key={name}
+                  href={url}
+                  aria-label={name}
+                >
+                  <SocialIcon
+                    type={
+                      name === 'instagram'
+                        ? 'Instagram'
+                        : name === 'linkedin'
+                          ? 'LinkedIn'
+                          : name === 'youtube'
+                            ? 'YouTube'
+                            : 'Pinterest'
+                    }
+                  />
+                </a>
+              ))}
+            </div>
+            <a className="btn" href={`https://wa.me/${site.whatsapp}`}>
+              Chat on WhatsApp
+            </a>
+          </div>
+        </div>
+
+        <div className="foot-bottom">
+          <span>
+            © 2026 Weddings Vibe. All rights reserved. ·{' '}
+            <Link href="/privacy-policy">Privacy</Link> · <Link href="/terms">Terms</Link>
+          </span>
+          <Link className="totop" href="/" aria-label="Back to home">
+            ↑
+          </Link>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export function Shell({ children }) {
+  return (
+    <>
+      <Header />
+      <main>{children}</main>
+      <Footer />
+      <a
+        className="wa-float"
+        aria-label="Chat on WhatsApp"
+        href={`https://wa.me/${site.whatsapp}`}
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M20 11.5a8 8 0 0 1-11.8 7L4 20l1.5-4A8 8 0 1 1 20 11.5Z" />
+          <path d="M9 8.5c.3 2.6 2 4.4 4.7 5.2l1.1-1.1 2 .9c-.2 1.2-1.2 1.8-2.4 1.7-3.6-.4-6.7-3.4-7-6.8-.1-1.2.5-2.2 1.5-2.4l1 2z" />
+        </svg>
+      </a>
+    </>
+  );
+}
+
+export function ImageBox({ image = weddingImages.couple, className = '', alt = '' }) {
+  const isRemote = image.startsWith('https://');
+
+  return (
+    <div
+      role="img"
+      aria-label={alt}
+      className={`ph ${isRemote ? '' : image.replace('.svg', '')} ${className}`}
+      style={isRemote ? { backgroundImage: `url("${image}")` } : undefined}
+    />
+  );
+}
+
+export function VenueCard({ venue, image = venue.images[0] }) {
+  return (
+    <Link href={`/venues/${venue.citySlug}/${venue.slug}`} className="card">
+      <ImageBox image={image} alt={venue.name} />
+      <div className="cardbody">
+        <div className="rating">
+          ★ {venue.rating} <span>({venue.reviewCount} reviews)</span>
+        </div>
+        <h3>{venue.name}</h3>
+        <p className="venue-location">
+          <LocationThumb cityName={venue.city} />
+          {venue.area}, {venue.city} · {venue.capacity.max} guests
+        </p>
+        <strong>
+          ₹{venue.pricePerPlate.toLocaleString('en-IN')} <small>/ plate</small>
+        </strong>
+      </div>
+    </Link>
+  );
+}
+
+export function EnquiryForm({ type = 'contact', subject = '', slug = '', compact = false }) {
+  const [status, setStatus] = useState('');
+  const [city, setCity] = useState('');
+
+  async function submit(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    setStatus('Sending your enquiry…');
+    const data = Object.fromEntries(new FormData(form));
+
+    try {
+      if (process.env.NEXT_PUBLIC_API_URL) {
+        const r = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, type, subject, slug }),
+        });
+        if (!r.ok) throw Error('Please try again in a moment.');
+      }
+      setStatus('Thank you! A wedding planner will be in touch shortly.');
+      form.reset();
+      setCity('');
+    } catch {
+      setStatus(`We could not send that just now. Please call us at ${site.phone}.`);
+    }
+  }
+
+  return (
+    <form className={`form ${compact ? 'compact' : ''}`} onSubmit={submit}>
+      <h3>{subject || 'Tell us about your wedding'}</h3>
+
+      <label>
+        Your name
+        <input name="name" required autoComplete="name" />
+      </label>
+
+      <label>
+        Phone number
+        <input name="phone" type="tel" required autoComplete="tel" pattern="[+0-9 ()-]{8,}" />
+      </label>
+
+      <label>
+        Email address
+        <input name="email" type="email" autoComplete="email" />
+      </label>
+
+      <label>
+        <span className="filter-city-heading">
+          <LocationThumb cityName={city || 'India'} />
+          City
+        </span>
+        <select name="city" value={city} onChange={(e) => setCity(e.target.value)}>
+          <option value="">Choose a city</option>
+          {cities.map((c) => (
+            <option key={c.slug}>{c.name}</option>
+          ))}
+        </select>
+      </label>
+
+      <label>
+        Wedding date
+        <input name="date" type="date" />
+      </label>
+
+      <label>
+        Guest count
+        <input name="guests" type="number" min="1" />
+      </label>
+
+      <label className="trap">
+        Website
+        <input name="website" tabIndex="-1" autoComplete="off" />
+      </label>
+
+      <label>
+        Tell us a little more
+        <textarea name="message" rows="3" />
+      </label>
+
+      <button className="btn" disabled={status.startsWith('Sending')}>
+        Send enquiry
+      </button>
+
+      {status && <p role="status">{status}</p>}
+    </form>
+  );
+}
+
+export function BudgetPlanner() {
+  const [step, setStep] = useState(false);
+  const [done, setDone] = useState(false);
+  const [plan, setPlan] = useState({ guests: '150', budget: '', city: 'Delhi NCR' });
+  const [status, setStatus] = useState('');
+
+  async function send(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const data = { ...Object.fromEntries(new FormData(form)), ...plan };
+    setStatus('Sending your plan…');
+
+    try {
+      if (process.env.NEXT_PUBLIC_API_URL) {
+        const r = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/enquiry`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...data, type: 'budget-planner' }),
+        });
+        if (!r.ok) throw Error();
+      }
+      setDone(true);
+    } catch {
+      setStatus(`We could not send that now. Please call us at ${site.phone}.`);
+    }
+  }
+
+  const total = Number(plan.budget) || 0;
+
+  return (
+    <div className="budget-panel">
+      {done ? (
+        <>
+          <h3>Your celebration, thoughtfully divided</h3>
+          <div className="budget-split">
+            {[
+              ['Food', 40],
+              ['Decor', 30],
+              ['Photography', 20],
+              ['Flex fund', 10],
+            ].map(([label, share]) => (
+              <p key={label}>
+                {label}
+                <strong>
+                  {total ? `₹${Math.round((total * share) / 100).toLocaleString('en-IN')}` : `${share}%`}
+                </strong>
+              </p>
+            ))}
+          </div>
+          <p>
+            {plan.city} · {Number(plan.guests).toLocaleString('en-IN')} guests
+          </p>
+          <p>We’ll be in touch to tailor this plan to your day.</p>
+        </>
+      ) : step ? (
+        <form className="form" onSubmit={send}>
+          <h3>Where can we send your plan?</h3>
+
+          <label>
+            Your name
+            <input name="name" required autoComplete="name" />
+          </label>
+
+          <label>
+            Phone number
+            <input name="phone" required type="tel" pattern="[+0-9 ()-]{8,}" autoComplete="tel" />
+          </label>
+
+          <label>
+            Email address
+            <input name="email" type="email" />
+          </label>
+
+          <label className="trap">
+            Website
+            <input name="website" tabIndex="-1" autoComplete="off" />
+          </label>
+
+          <button className="btn">Get my plan</button>
+          {status && <p role="status">{status}</p>}
+        </form>
+      ) : (
+        <form
+          className="budget-form"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setStep(true);
+          }}
+        >
+          <label>
+            Guests
+            <input
+              type="number"
+              min="1"
+              required
+              value={plan.guests}
+              onChange={(e) => setPlan({ ...plan, guests: e.target.value })}
+            />
+          </label>
+
+          <label>
+            Budget
+            <input
+              type="number"
+              min="1"
+              required
+              placeholder="₹"
+              value={plan.budget}
+              onChange={(e) => setPlan({ ...plan, budget: e.target.value })}
+            />
+          </label>
+
+          <label>
+            <span className="filter-city-heading">
+              <LocationThumb cityName={plan.city} />
+              City
+            </span>
+            <select
+              value={plan.city}
+              onChange={(e) => setPlan({ ...plan, city: e.target.value })}
+            >
+              {cities.map((c) => (
+                <option key={c.slug}>{c.name}</option>
+              ))}
+            </select>
+          </label>
+
+          <button className="btn">Show my plan</button>
+        </form>
+      )}
+    </div>
+  );
+}
