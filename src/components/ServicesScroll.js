@@ -4,6 +4,16 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { services } from '@/data/site';
 
+const serviceImages = {
+  decor: '/images/wedding/Decor.jpg.jpeg',
+  'photography-film': '/images/wedding/Photography%20%26%20film.jpg.jpeg',
+  catering: '/images/wedding/Catering.jpg.jpeg',
+  'mehendi-artists': '/images/wedding/Mehendi%20artists.jpg.jpeg',
+  'dj-music': '/images/wedding/DJ%20%26%20music.jpg.jpeg',
+  'bridal-makeup': '/images/wedding/Bridal%20makeup.jpg.jpeg',
+
+};
+
 export default function ServicesScroll() {
   const wrapRef = useRef(null);
   const stageRef = useRef(null);
@@ -115,7 +125,7 @@ export default function ServicesScroll() {
                   className="svs-img"
                   role="img"
                   aria-label={s.name}
-                  style={{ backgroundImage: `url("${s.image}")` }}
+                  style={{ backgroundImage: `url("${serviceImages[s.slug] || s.image}")` }}
                 />
               </article>
             ))}

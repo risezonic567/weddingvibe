@@ -33,6 +33,15 @@ const venuesByCity = Object.fromEntries(
   cities.map((city) => [city.slug, venues.filter((venue) => venue.citySlug === city.slug)])
 );
 
+const serviceMenuImages = {
+  decor: '/images/wedding/Decor.jpg.jpeg',
+  'photography-film': '/images/wedding/Photography%20%26%20film.jpg.jpeg',
+  'bridal-makeup': '/images/wedding/Bridal%20makeup.jpg.jpeg',
+  catering: '/images/wedding/Catering.jpg.jpeg',
+  'mehendi-artists': '/images/wedding/Mehendi%20artists.jpg.jpeg',
+  'dj-music': '/images/wedding/DJ%20%26%20music.jpg.jpeg',
+};
+
 const venueTypes = [
   'Banquet halls',
   'Resorts',
@@ -183,7 +192,7 @@ export function Header() {
                 <div className="mobile-service-links">
                   {services.map((service) => (
                     <Link href={`/services/${service.slug}`} key={service.slug} onClick={() => setOpen(false)}>
-                      <span className="service-thumb"><Image src={service.image} alt="" width={48} height={48} sizes="48px" /></span>
+                      <span className="service-thumb"><Image src={serviceMenuImages[service.slug] || service.image} alt="" width={48} height={48} sizes="48px" /></span>
                       <span><strong>{service.name}</strong><small>{service.shortDescription}</small></span>
                     </Link>
                   ))}
@@ -270,7 +279,7 @@ export function Header() {
               <div className="service-menu-grid">
                 {services.map((service) => (
                   <Link className="service-menu-card" href={`/services/${service.slug}`} key={service.slug}>
-                    <span className="service-thumb"><Image src={service.image} alt="" width={60} height={60} sizes="60px" /></span>
+                    <span className="service-thumb"><Image src={serviceMenuImages[service.slug] || service.image} alt="" width={60} height={60} sizes="60px" /></span>
                     <span><strong>{service.name}</strong><small>{service.shortDescription}</small></span>
                   </Link>
                 ))}
@@ -489,8 +498,16 @@ export function EnquiryForm({ type = 'contact', subject = '', slug = '', compact
   async function submit(e) {
     e.preventDefault();
     const form = e.currentTarget;
-    setStatus('Sending your enquiry…');
     const data = Object.fromEntries(new FormData(form));
+
+    // honeypot: bot ne bhara hai to bhejna nahi
+    if (data.website) {
+      setStatus('Thank you! A wedding planner will be in touch shortly.');
+      form.reset();
+      return;
+    }
+
+    setStatus('Sending your enquiry…');
 
     try {
       if (process.env.NEXT_PUBLIC_API_URL) {
@@ -510,55 +527,72 @@ export function EnquiryForm({ type = 'contact', subject = '', slug = '', compact
   }
 
   return (
-    <form className={`form ${compact ? 'compact' : ''}`} onSubmit={submit}>
-      <h3>{subject || 'Tell us about your wedding'}</h3>
+    <form className={`form enq ${compact ? 'compact' : ''}`} onSubmit={submit}>
+      <div className="enq-head">
+        <h3>{subject || 'Tell us about your wedding'}</h3>
+        <p>Takes 30 seconds. A planner will call you back.</p>
+      </div>
 
-      <label>
-        Your name
-        <input name="name" required autoComplete="name" />
-      </label>
+      <div className="enq-row">
+        <label>
+          Your name
+          <input name="name" required autoComplete="name" placeholder="Full name" />
+        </label>
+        <label>
+          Phone number
+          <input
+            name="phone"
+            type="tel"
+            required
+            autoComplete="tel"
+            pattern="[+0-9 ()-]{8,}"
+            placeholder="+91"
+          />
+        </label>
+      </div>
 
-      <label>
-        Phone number
-        <input name="phone" type="tel" required autoComplete="tel" pattern="[+0-9 ()-]{8,}" />
-      </label>
+      <div className="enq-row">
+        <label>
+          <span className="filter-city-heading">
+            <LocationThumb cityName={city || 'India'} />
+            City
+          </span>
+          <select name="city" value={city} onChange={(e) => setCity(e.target.value)}>
+            <option value="">Choose a city</option>
+            {cities.map((c) => (
+              <option key={c.slug}>{c.name}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Wedding date
+          <input name="date" type="date" />
+        </label>
+      </div>
 
-      <label>
-        Email address
-        <input name="email" type="email" autoComplete="email" />
-      </label>
-
-      <label>
-        <span className="filter-city-heading">
-          <LocationThumb cityName={city || 'India'} />
-          City
-        </span>
-        <select name="city" value={city} onChange={(e) => setCity(e.target.value)}>
-          <option value="">Choose a city</option>
-          {cities.map((c) => (
-            <option key={c.slug}>{c.name}</option>
-          ))}
-        </select>
-      </label>
-
-      <label>
-        Wedding date
-        <input name="date" type="date" />
-      </label>
-
-      <label>
-        Guest count
-        <input name="guests" type="number" min="1" />
-      </label>
+      <details className="enq-more">
+        <summary>Add more details (optional)</summary>
+        <div className="enq-more-body">
+          <div className="enq-row">
+            <label>
+              Guest count
+              <input name="guests" type="number" min="1" placeholder="e.g. 250" />
+            </label>
+            <label>
+              Email address
+              <input name="email" type="email" autoComplete="email" placeholder="you@email.com" />
+            </label>
+          </div>
+          <label>
+            Tell us a little more
+            <textarea name="message" rows="2" />
+          </label>
+        </div>
+      </details>
 
       <label className="trap">
         Website
         <input name="website" tabIndex="-1" autoComplete="off" />
-      </label>
-
-      <label>
-        Tell us a little more
-        <textarea name="message" rows="3" />
       </label>
 
       <button className="btn" disabled={status.startsWith('Sending')}>
