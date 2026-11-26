@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { cities, site, venues } from '@/data/site';
+import { cities, services, site, venues } from '@/data/site';
 import { weddingImages } from '@/data/wedding-images';
 import LocationThumb from '@/components/LocationThumb';
 
@@ -44,6 +44,7 @@ const venueTypes = [
 export function Header() {
   const [open, setOpen] = useState(false);
   const [venuesOpen, setVenuesOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
   const [activeCity, setActiveCity] = useState(cities[0].slug);
   const [activeVenueType, setActiveVenueType] = useState('');
   const [scrolled, setScrolled] = useState(false);
@@ -64,11 +65,11 @@ export function Header() {
 
   useEffect(() => {
     function closeOnOutsideClick(event) {
-      if (!navShellRef.current?.contains(event.target)) setVenuesOpen(false);
+      if (!navShellRef.current?.contains(event.target)) closeMegaMenus();
     }
     function closeOnEscape(event) {
       if (event.key === 'Escape') {
-        setVenuesOpen(false);
+        closeMegaMenus();
         setOpen(false);
       }
     }
@@ -87,7 +88,19 @@ export function Header() {
 
   function scheduleClose() {
     window.clearTimeout(closeTimer.current);
-    closeTimer.current = window.setTimeout(() => setVenuesOpen(false), 120);
+    closeTimer.current = window.setTimeout(() => { setVenuesOpen(false); setServicesOpen(false); }, 120);
+  }
+
+  function closeMegaMenus() {
+    window.clearTimeout(closeTimer.current);
+    setVenuesOpen(false);
+    setServicesOpen(false);
+  }
+
+  function openMegaMenu(menu) {
+    window.clearTimeout(closeTimer.current);
+    setVenuesOpen(menu === 'venues');
+    setServicesOpen(menu === 'services');
   }
 
   return (
@@ -114,28 +127,29 @@ export function Header() {
             <ul className="desktop-nav list-none m-0 p-0">
               {site.nav.map((item) => {
                 const isVenues = item.label === 'Venues';
+                const isServices = item.label === 'Services';
+                const dropdownOpen = isVenues ? venuesOpen : servicesOpen;
                 return (
                   <li
                     key={item.href}
-                    className={isVenues ? 'dd' : ''}
-                    onMouseEnter={isVenues ? () => { cancelClose(); setVenuesOpen(true); } : undefined}
-                    onMouseLeave={isVenues ? scheduleClose : undefined}
-                    onFocus={isVenues ? () => setVenuesOpen(true) : undefined}
+                    className={isVenues || isServices ? `dd${dropdownOpen ? ' is-open' : ''}` : ''}
+                    onMouseEnter={isVenues || isServices ? () => openMegaMenu(isVenues ? 'venues' : 'services') : undefined}
+                    onMouseLeave={isVenues || isServices ? scheduleClose : undefined}
+                    onFocus={isVenues || isServices ? () => openMegaMenu(isVenues ? 'venues' : 'services') : undefined}
                   >
                     <Link
                       href={item.href}
-                      className={isVenues ? 'nav-dd-trigger' : undefined}
-                      aria-expanded={isVenues ? venuesOpen : undefined}
-                      aria-haspopup={isVenues ? 'true' : undefined}
-                      onClick={isVenues ? (event) => {
+                      className={isVenues || isServices ? 'nav-dd-trigger' : undefined}
+                      aria-expanded={isVenues || isServices ? dropdownOpen : undefined}
+                      aria-haspopup={isVenues || isServices ? 'true' : undefined}
+                      onClick={isVenues || isServices ? (event) => {
                         if (window.matchMedia('(max-width: 1023px)').matches) return;
                         event.preventDefault();
-                        cancelClose();
-                        setVenuesOpen(true);
+                        openMegaMenu(isVenues ? 'venues' : 'services');
                       } : undefined}
                     >
                       {item.label}
-                      {isVenues && <svg className="dd-caret" width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 4.5 6 8l3.5-3.5" /></svg>}
+                      {(isVenues || isServices) && <svg className="dd-caret" width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 4.5 6 8l3.5-3.5" /></svg>}
                     </Link>
                   </li>
                 );
@@ -163,6 +177,20 @@ export function Header() {
                 </details>
               ))}
             </div>
+            <div className="mobile-services-accordion">
+              <details>
+                <summary>Wedding vendors &amp; services</summary>
+                <div className="mobile-service-links">
+                  {services.map((service) => (
+                    <Link href={`/services/${service.slug}`} key={service.slug} onClick={() => setOpen(false)}>
+                      <span className="service-thumb"><Image src={service.image} alt="" width={48} height={48} sizes="48px" /></span>
+                      <span><strong>{service.name}</strong><small>{service.shortDescription}</small></span>
+                    </Link>
+                  ))}
+                  <Link className="mobile-service-all" href="/services" onClick={() => setOpen(false)}>Explore all services →</Link>
+                </div>
+              </details>
+            </div>
           </nav>
 
           <Link className="btn plan" href="/contact">Plan my wedding</Link>
@@ -174,7 +202,7 @@ export function Header() {
           onMouseEnter={cancelClose}
           onMouseLeave={scheduleClose}
           onClick={(event) => {
-            if (event.target.closest('a')) setVenuesOpen(false);
+            if (event.target.closest('a')) closeMegaMenus();
           }}
         >
           <div className="wrap">
@@ -226,6 +254,28 @@ export function Header() {
                 ))}
                 <Link className="mega-explore-all" href="/venues">Explore all venues <span aria-hidden="true">→</span></Link>
               </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className={`mega services-mega${servicesOpen ? ' is-open' : ''}`}
+          aria-hidden={!servicesOpen}
+          onMouseEnter={cancelClose}
+          onMouseLeave={scheduleClose}
+          onClick={(event) => { if (event.target.closest('a')) closeMegaMenus(); }}
+        >
+          <div className="wrap">
+            <div className="mbox services-mbox">
+              <div className="chd"><div><h3>Wedding vendors &amp; services</h3><p>Meet the people who bring every detail of your celebration to life.</p></div></div>
+              <div className="service-menu-grid">
+                {services.map((service) => (
+                  <Link className="service-menu-card" href={`/services/${service.slug}`} key={service.slug}>
+                    <span className="service-thumb"><Image src={service.image} alt="" width={60} height={60} sizes="60px" /></span>
+                    <span><strong>{service.name}</strong><small>{service.shortDescription}</small></span>
+                  </Link>
+                ))}
+              </div>
+              <Link className="mega-explore-all" href="/services">Explore all services <span aria-hidden="true">→</span></Link>
             </div>
           </div>
         </div>
@@ -383,15 +433,31 @@ export function Shell({ children }) {
 }
 
 export function ImageBox({ image = weddingImages.couple, className = '', alt = '' }) {
-  const isRemote = image.startsWith('https://');
+  const isImageSource = image.startsWith('https://') || image.startsWith('/');
+  const fallbackImage = '/images/wedding/wedding vibes Decor.jpg.jpeg';
+  const [failedImage, setFailedImage] = useState(null);
+  const imageSource = failedImage === image ? fallbackImage : image;
 
   return (
     <div
       role="img"
       aria-label={alt}
-      className={`ph ${isRemote ? '' : image.replace('.svg', '')} ${className}`}
-      style={isRemote ? { backgroundImage: `url("${image}")` } : undefined}
-    />
+      className={`ph ${isImageSource ? '' : image.replace('.svg', '')} ${className}`}
+      style={isImageSource ? { backgroundImage: `url("${fallbackImage}")` } : undefined}
+    >
+      {isImageSource && (
+        <span className="ph-image-frame" aria-hidden="true" style={{ position: 'relative', display: 'block', width: '100%', height: '100%', minHeight: 'inherit', overflow: 'hidden' }}>
+          <Image
+            src={imageSource}
+            alt=""
+            fill
+            sizes="(max-width: 700px) 100vw, (max-width: 1200px) 50vw, 1200px"
+            style={{ objectFit: 'cover' }}
+            onError={() => setFailedImage(image)}
+          />
+        </span>
+      )}
+    </div>
   );
 }
 
@@ -545,11 +611,12 @@ export function BudgetPlanner() {
               ['Photography', 20],
               ['Flex fund', 10],
             ].map(([label, share]) => (
-              <p key={label}>
-                {label}
+              <p className="budget-split-item" key={label}>
+                <span className="budget-split-heading"><i aria-hidden="true">{['♧', '✿', '◎', '✦'][['Food','Decor','Photography','Flex fund'].indexOf(label)]}</i>{label}
                 <strong>
                   {total ? `₹${Math.round((total * share) / 100).toLocaleString('en-IN')}` : `${share}%`}
-                </strong>
+                </strong></span>
+                <span className="budget-bar"><i style={{ width: `${share}%` }} /></span>
               </p>
             ))}
           </div>
@@ -557,6 +624,10 @@ export function BudgetPlanner() {
             {plan.city} · {Number(plan.guests).toLocaleString('en-IN')} guests
           </p>
           <p>We’ll be in touch to tailor this plan to your day.</p>
+          <div className="budget-result-actions">
+            <Link className="btn" href="/contact">Talk to a planner</Link>
+            <a className="btn btn-light" href={`https://wa.me/${site.whatsapp}`}>Chat on WhatsApp</a>
+          </div>
         </>
       ) : step ? (
         <form className="form" onSubmit={send}>
@@ -594,7 +665,7 @@ export function BudgetPlanner() {
           }}
         >
           <label>
-            Guests
+            <span className="budget-field-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3.5 19v-1.5A4.5 4.5 0 0 1 8 13h2a4.5 4.5 0 0 1 4.5 4.5V19M16 5.5a3 3 0 0 1 0 5.8M17 13h.5a4 4 0 0 1 4 4v2"/></svg>Guests</span>
             <input
               type="number"
               min="1"
@@ -605,7 +676,7 @@ export function BudgetPlanner() {
           </label>
 
           <label>
-            Budget
+            <span className="budget-field-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M17 6H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Budget</span>
             <input
               type="number"
               min="1"
@@ -618,6 +689,7 @@ export function BudgetPlanner() {
 
           <label>
             <span className="filter-city-heading">
+              <svg className="budget-input-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>
               <LocationThumb cityName={plan.city} />
               City
             </span>

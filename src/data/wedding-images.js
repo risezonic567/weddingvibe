@@ -9,7 +9,7 @@ export const weddingImages = {
   mehendi: unsplash('photo-1770346279037-89853a3e8c60'),
   haldi: unsplash('photo-1771992232127-82002efcd233'),
   makeup: unsplash('photo-1667522594484-cdd8dc95fbee'),
-  decor: unsplash('photo-1747041807605-87a31a4b41e0'),
+  decor: '/images/wedding/wedding vibes Decor.jpg.jpeg',
   buffet: unsplash('photo-1649140041688-0f75446e707e'),
   music: unsplash('photo-1768054182948-9c05cecb8ef2'),
   celebration: unsplash('photo-1759719440818-98681ed4c6b8'),

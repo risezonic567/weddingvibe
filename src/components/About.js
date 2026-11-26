@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { ImageBox } from '@/components/Site';
 
 const STATS = [
   { value: "500+", label: "Verified venues" },
@@ -20,13 +20,11 @@ export default function About() {
           <div className="absolute inset-0 -translate-x-4 -translate-y-4 rounded-[28px] border border-[#c9a24d]/50 transition-all duration-500 ease-out group-hover:-translate-x-5 group-hover:-translate-y-5 group-hover:-rotate-3" />
 
           {/* Image */}
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] shadow-2xl">
-            <Image
-              src="/images/about.jpg"
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-[#f1ece2] shadow-2xl">
+            <ImageBox
+              image="/images/wedding/wedding vibes Decor.jpg.jpeg"
               alt="Wedding celebration by Weddings Vibe"
-              fill
-              sizes="(min-width: 1024px) 520px, 100vw"
-              className="object-cover transition-transform duration-700 group-hover:scale-105"
+              className="absolute inset-0 h-full w-full rounded-[28px] transition-transform duration-700 group-hover:scale-105"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
           </div>

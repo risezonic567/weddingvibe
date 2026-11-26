@@ -28,6 +28,11 @@ export default function Home() {
         <Link className="btn btn-outline city-cta" href="/venues">View all cities</Link>
       </div>
     </section>
+
+      <section className="sec">
+      <ServicesScroll />
+    </section>
+
     <section className="sec cream">
       <div className="wrap"
       ><h2 className="h2">Featured venues</h2>
@@ -35,20 +40,15 @@ export default function Home() {
         <div className="grid venue-grid">{venues.filter(v => v.featured).slice(0, 3).map((v, i) => <VenueCard venue={v} image={[weddingImages.mandap, weddingImages.decor, weddingImages.venue][i]} key={v.slug} />)}</div>
       </div>
     </section>
-    <section className="sec">
+
+    {/* <section className="sec ">
       <div className="wrap center">
         <h2 className="h2">Browse by venue type</h2>
         <p className="sub">From city banquets to palace weddings.</p>
         <div className="type-chips">{['Banquet halls', 'Resorts', 'Farmhouses', 'Palaces', 'Beach venues', 'Destination'].map(x => <Link className="chip" href="/venues" key={x}>{x}</Link>)}</div>
       </div>
-    </section>
-    <section className="sec">
-      <div className="wrap">
-        <h2 className="h2">Everything for your wedding</h2>
-        <p className="sub">Book the venue, then build the rest around it. Scroll to explore.</p>
-        <ServicesScroll />
-      </div>
-    </section>
+    </section> */}
+  
     <section className="sec">
       <div className="wrap">
         <div className="center">
@@ -81,13 +81,25 @@ export default function Home() {
         </div>
       </div>
     </section>
-    <section className="sec">
+    <section className="sec budget-section">
       <div className="wrap budget">
-        <div>
-          <h2 className="h2">What will your wedding cost?</h2>
-          <p className="budget-copy">Enter your guest count and budget. We suggest venues and a rough split across food, decor and photography.</p>
+        <div className="budget-story">
+          <div className="budget-collage" aria-label="Wedding celebrations and details">
+            <ImageBox image={weddingImages.ceremony} className="budget-collage-main" alt="A beautifully decorated wedding ceremony" />
+            <ImageBox image={weddingImages.couple} className="budget-collage-couple" alt="A couple celebrating their wedding" />
+            <ImageBox image={weddingImages.decor} className="budget-collage-detail" alt="Wedding flowers and decor" />
+            <svg className="budget-mandala" viewBox="0 0 120 120" aria-hidden="true"><g fill="none" stroke="currentColor" strokeWidth="1"><circle cx="60" cy="60" r="8"/><circle cx="60" cy="60" r="22"/><circle cx="60" cy="60" r="38"/><circle cx="60" cy="60" r="54"/>{Array.from({length:12},(_,i)=><path key={i} d="M60 6C75 22 75 38 60 60 45 38 45 22 60 6Z" transform={`rotate(${i*30} 60 60)`}/>)}</g></svg>
+          </div>
+          <p className="eyebrow budget-eyebrow">WEDDING BUDGET PLANNER</p>
+          <h2 className="h2 budget-heading">What will your <em>wedding cost?</em></h2>
+          <p className="budget-copy">A thoughtful first estimate, shaped around your guest list, city and the celebration you have in mind.</p>
+          <div className="budget-trust">
+            <span><i aria-hidden="true">✦</i>Free planning call</span>
+            <span><i aria-hidden="true">✦</i>Verified venues only</span>
+            <span><i aria-hidden="true">✦</i>No hidden charges</span>
+          </div>
         </div>
-        <div className="card budget-card">
+        <div className="budget-card">
           <BudgetPlanner />
         </div>
       </div>
