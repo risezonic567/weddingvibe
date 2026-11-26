@@ -1,5 +1,7 @@
 import { Playfair_Display, Poppins } from 'next/font/google';
 import './globals.css';
+import './enhancements.css';
+import './responsive.css';
 import { Shell } from '@/components/Site';
 import { site } from '@/data/site';
 

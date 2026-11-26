@@ -1,0 +1,56 @@
+@media (max-width: 1023px) {
+  .header .navrow {
+    gap: 8px;
+  }
+
+  .header .brand {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .header .brand span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .header .hamb {
+    display: grid;
+    flex: 0 0 44px;
+    min-width: 44px;
+    place-items: center;
+    margin-left: 0;
+    order: 3;
+  }
+
+  .header .plan {
+    flex: 0 0 auto;
+    margin-left: auto;
+    order: 2;
+  }
+}
+
+@media (max-width: 520px) {
+  .header .brand img {
+    height: 36px;
+    width: auto;
+  }
+
+  .header .brand span {
+    font-size: 12.5px;
+    letter-spacing: 0.05em;
+  }
+
+  .header .plan {
+    min-height: 40px;
+    padding-inline: 10px;
+    font-size: 12px;
+  }
+}
+
+.header-home.header-transparent .hamb {
+  background: #00000033;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+}

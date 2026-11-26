@@ -2,11 +2,13 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { QRCodeSVG } from 'qrcode.react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { cities, site, venues } from '@/data/site';
 import { weddingImages } from '@/data/wedding-images';
 import LocationThumb from '@/components/LocationThumb';
+
 
 function Brand({ footer = false }) {
   return (
@@ -297,9 +299,21 @@ export function Footer() {
 
           <div>
             <div className="qr">
-              <div className="qrbox">
-                <span>W</span>
-              </div>
+              <a
+                className="qrbox"
+                href={site.socials.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Follow Weddings Vibe on Instagram"
+              >
+                <QRCodeSVG
+                  value={site.socials.instagram}
+                  size={112}
+                  bgColor="#ffffff"
+                  fgColor="#000000"
+                  level="M"
+                />
+              </a>
               <div>Scan to follow us on Instagram</div>
               <strong>{site.instagram}</strong>
             </div>
