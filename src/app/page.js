@@ -179,7 +179,7 @@ export default function Home() {
         <div className="wrap budget">
           <div className="budget-story">
             <div className="budget-collage" aria-label="Wedding celebrations and details">
-              <ImageBox image={weddingImages.ceremony} className="budget-collage-main" alt="A beautifully decorated wedding ceremony" />
+              <ImageBox image="/images/wedding/Photography%20%26%20film.jpg.jpeg" className="budget-collage-main" alt="Wedding photography for your budget planner" />
               <ImageBox image={weddingImages.couple} className="budget-collage-couple" alt="A couple celebrating their wedding" />
               <ImageBox image={weddingImages.decor} className="budget-collage-detail" alt="Wedding flowers and decor" />
               <svg className="budget-mandala" viewBox="0 0 120 120" aria-hidden="true">

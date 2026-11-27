@@ -338,8 +338,8 @@ export default function About() {
 
                   <div className="relative aspect-[4/5] overflow-hidden rounded-[28px] bg-[#f1ece2] shadow-2xl">
                     <ImageBox
-                      image="/images/wedding/wedding vibes Decor.jpg.jpeg"
-                      alt="Wedding celebration by Weddings Vibe"
+                      image="/images/wedding/Photography%20%26%20film.jpg.jpeg"
+                      alt="Wedding photography by Weddings Vibe"
                       className="absolute inset-0 h-full w-full rounded-[28px] transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
