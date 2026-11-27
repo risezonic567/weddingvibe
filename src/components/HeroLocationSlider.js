@@ -45,7 +45,7 @@ export default function HeroLocationSlider() {
           {/* LEFT: Headline */}
           <div>
             <h1
-              className={`${enter} [animation-delay:.18s] max-w-[640px] font-[family-name:var(--font-head)] text-[clamp(1.8rem,5.5vw,2.25rem)] font-medium leading-[1.15] tracking-[0.01em] [text-shadow:0_2px_16px_rgba(0,0,0,.4)] md:text-[2.75rem] lg:text-[3.25rem] [&_em]:block [&_em]:font-medium [&_em]:not-italic [&_em]:text-[#dfbf70]`}
+              className={`${enter} [animation-delay:.18s]    font-[family-name:var(--font-head)] text-[clamp(1.8rem,5.5vw,2.25rem)] font-medium leading-[1.15] tracking-[0.01em] [text-shadow:0_2px_16px_rgba(0,0,0,.4)] md:text-[2.75rem] lg:text-[3.25rem] [&_em]:block [&_em]:font-medium [&_em]:not-italic [&_em]:text-[#dfbf70]`}
             >
               Find the venue that feels like <em>your wedding.</em>
             </h1>

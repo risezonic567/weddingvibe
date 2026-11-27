@@ -179,7 +179,7 @@ export function Header() {
                     {venuesByCity[city.slug].map((venue) => (
                       <Link key={venue.slug} href={`/venues/${venue.citySlug}/${venue.slug}`}>
                         <span>{venue.name}</span>
-                        <small>{venue.area} · ₹{venue.pricePerPlate.toLocaleString('en-IN')}/plate</small>
+                        {/* <small>{venue.area} · ₹{venue.pricePerPlate.toLocaleString('en-IN')}/plate</small> */}
                       </Link>
                     ))}
                   </div>
@@ -484,7 +484,7 @@ export function VenueCard({ venue, image = venue.images[0] }) {
           {venue.area}, {venue.city} · {venue.capacity.max} guests
         </p>
         <strong>
-          ₹{venue.pricePerPlate.toLocaleString('en-IN')} <small>/ plate</small>
+          {/* ₹{venue.pricePerPlate.toLocaleString('en-IN')} <small>/ plate</small> */}
         </strong>
       </div>
     </Link>
