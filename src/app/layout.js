@@ -1,4 +1,5 @@
 import { Playfair_Display, Poppins } from 'next/font/google';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import './globals.css';
 import './enhancements.css';
 import './responsive.css';
@@ -15,5 +16,6 @@ export default function RootLayout({ children }) {
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', '@type': 'Organization', name: site.name, url: 'https://weddingsvibe.com', email: site.email, telephone: site.phone, sameAs: Object.values(site.socials) }) }} />
             <Shell>{children}</Shell>
         </body>
+        {process.env.NODE_ENV === 'production' && <GoogleAnalytics gaId="G-YCS8T6WYW5" />}
     </html>;
 }

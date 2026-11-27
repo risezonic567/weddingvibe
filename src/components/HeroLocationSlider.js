@@ -1,126 +1,101 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { cities } from '@/data/site';
 
-// Change a slide to type: 'video' and provide its src to use a looping video.
-const HERO_SLIDES = [
-  { type: 'image', src: 'https://images.unsplash.com/photo-1744805624954-a6686543c3ff?auto=format&fit=crop&w=2200&q=90', alt: 'Grand Indian wedding celebration at sunset' },
-  { type: 'image', src: 'https://images.unsplash.com/photo-1774024333427-f1bf80d0e3c4?auto=format&fit=crop&w=2200&q=90', alt: 'Wedding mandap surrounded by floral decor' },
-  { type: 'image', src: 'https://images.unsplash.com/photo-1744804298726-88ee70f07fdc?auto=format&fit=crop&w=2200&q=90', alt: 'Joyful wedding celebration in India' },
-  { type: 'image', src: 'https://images.unsplash.com/photo-1781077126479-437220427c93?auto=format&fit=crop&w=2200&q=90', alt: 'Indian wedding celebration by the coast' },
-];
+const HERO_VIDEO = '/images/video/Wedding Vibe Banner01.mp4';
 
-const HERO_PROOF = {
-  venues: '500+',
-  weddings: '10,000+',
-  rating: '4.8',
-};
+const HERO_PROOF = { venues: '500+', weddings: '10,000+', rating: '4.8' };
 
-const GUEST_OPTIONS = [
-  ['50-100', '50–100 guests'],
-  ['100-300', '100–300 guests'],
-  ['300-500', '300–500 guests'],
-  ['500+', '500+ guests'],
-];
-
-const BUDGET_OPTIONS = [
-  ['under-1000', 'Under ₹1,000'],
-  ['1000-2000', '₹1,000–₹2,000'],
-  ['2000-3000', '₹2,000–₹3,000'],
-  ['3000+', '₹3,000+'],
-];
+const enter = 'opacity-0 animate-fade-up motion-reduce:animate-none motion-reduce:opacity-100';
+const gold = 'bg-[linear-gradient(145deg,#d2b570,#987137)] border border-[#e1c57d] text-white';
 
 export default function HeroLocationSlider() {
-  const router = useRouter();
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [city, setCity] = useState('');
-  const [guests, setGuests] = useState('');
-  const [budget, setBudget] = useState('');
 
   useEffect(() => {
-    if (paused) return undefined;
-    const timer = window.setInterval(() => setActiveIndex(index => (index + 1) % HERO_SLIDES.length), 5000);
-    return () => window.clearInterval(timer);
-  }, [paused]);
-
-  useEffect(() => {
-    const updateScroll = () => setScrolled(window.scrollY > 80);
-    updateScroll();
-    window.addEventListener('scroll', updateScroll, { passive: true });
-    return () => window.removeEventListener('scroll', updateScroll);
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  function searchVenues(event) {
-    event.preventDefault();
-    const query = new URLSearchParams();
-    if (city) query.set('city', city);
-    if (guests) query.set('guests', guests);
-    if (budget) query.set('budget', budget);
-    const queryString = query.toString();
-    router.push(`/venues${queryString ? `?${queryString}` : ''}`);
-  }
-
   return (
-    <section className="home-hero" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <div className="hero-slider" aria-hidden="true">
-        <div className="hero-slider-frame">
-          {HERO_SLIDES.map((slide, index) => (
-            <div className={`hero-slide${index === activeIndex ? ' is-active' : ''}`} key={slide.src}>
-              {slide.type === 'video'
-                ? <video src={slide.src} autoPlay muted loop playsInline />
-                : <Image src={slide.src} alt={slide.alt} fill sizes="100vw" priority={index === 0} />}
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="hero-slider-backdrop" aria-hidden="true" />
+    <section className="relative isolate flex min-h-svh items-end overflow-hidden bg-[#201a16] pt-28 pb-20 md:min-h-[680px] lg:min-h-[760px]">
+      {/* Video */}
+      <video
+        src={HERO_VIDEO}
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden="true"
+        className="absolute inset-0 -z-20 h-full w-full object-cover"
+      />
 
-      <div className="wrap home-hero-grid">
-        <div className="home-hero-content">
-       
-          <h1 className="hero-enter hero-enter-2">Find the venue that feels like <em>your wedding.</em></h1>
-          <p className="home-hero-copy hero-enter hero-enter-3">Compare verified venues, check prices per plate and send one enquiry. No endless calls.</p>
+      {/* Overlay: neeche zyada dark taaki text padhne me aaye, upar video clear */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-[linear-gradient(0deg,#000000c0_0%,#00000070_35%,#00000015_65%,transparent_100%)]"
+      />
 
-          <form className="hero-search hero-enter hero-enter-4" onSubmit={searchVenues}>
-            <label><span>City</span><select value={city} onChange={event => setCity(event.target.value)}>
-              <option value="">Any city</option>{cities.map(item => <option value={item.name} key={item.slug}>{item.name}</option>)}
-            </select></label>
-            <label><span>Guests</span><select value={guests} onChange={event => setGuests(event.target.value)}>
-              <option value="">Any guest count</option>{GUEST_OPTIONS.map(([value, label]) => <option value={value} key={value}>{label}</option>)}
-            </select></label>
-            <label><span>Budget per plate</span><select value={budget} onChange={event => setBudget(event.target.value)}>
-              <option value="">Any budget</option>{BUDGET_OPTIONS.map(([value, label]) => <option value={value} key={value}>{label}</option>)}
-            </select></label>
-            <button type="submit" className="hero-search-submit">Search venues</button>
-          </form>
-
-          <div className="actions hero-actions hero-enter hero-enter-5">
-            <Link className="btn hero-primary" href="/venues">Explore venues</Link>
-            <Link className="btn btn-outline hero-secondary" href="/contact">Plan my wedding</Link>
+      <div className="relative z-10 mx-auto w-full max-w-[1200px] px-5 text-white md:px-6">
+        {/* Divider line + 2 columns */}
+        <div className="grid gap-8 border-t border-white/30 pt-8 lg:grid-cols-[1.6fr_1fr] lg:items-end lg:gap-12">
+          {/* LEFT: Headline */}
+          <div>
+            <h1
+              className={`${enter} [animation-delay:.18s] max-w-[640px] font-[family-name:var(--font-head)] text-[clamp(1.8rem,5.5vw,2.25rem)] font-medium leading-[1.15] tracking-[0.01em] [text-shadow:0_2px_16px_rgba(0,0,0,.4)] md:text-[2.75rem] lg:text-[3.25rem] [&_em]:block [&_em]:font-medium [&_em]:not-italic [&_em]:text-[#dfbf70]`}
+            >
+              Find the venue that feels like <em>your wedding.</em>
+            </h1>
+            <p className={`${enter} [animation-delay:.28s] mt-4 max-w-md text-sm text-white/85 md:text-base`}>
+              Compare verified venues, check prices per plate and send one enquiry. No endless calls.
+            </p>
           </div>
-          <p className="hero-proof-strip hero-enter hero-enter-5">
-            <span>{HERO_PROOF.venues} verified venues</span><i aria-hidden="true">·</i>
-            <span>{HERO_PROOF.weddings} weddings planned</span><i aria-hidden="true">·</i>
-            <span>{HERO_PROOF.rating}<b aria-hidden="true">★</b> rated</span>
-          </p>
+
+          {/* RIGHT: Stats + Buttons */}
+          <div className={`${enter} [animation-delay:.38s] lg:justify-self-end`}>
+            <div className="grid grid-cols-3 gap-6 md:gap-10">
+              {[
+                [HERO_PROOF.weddings, 'weddings planned'],
+                [HERO_PROOF.rating, 'google rating'],
+                [HERO_PROOF.venues, 'verified venues'],
+              ].map(([num, label]) => (
+                <div key={label}>
+                  <div className="font-[family-name:var(--font-head)] text-2xl font-semibold md:text-4xl">{num}</div>
+                  <div className="mt-1 text-[11px] text-white/80 md:text-sm">{label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <Link
+                href="/venues"
+                className={`${gold} inline-flex min-h-12 items-center justify-center rounded-xl px-6 text-sm font-semibold shadow-[0_6px_18px_rgba(0,0,0,.3)] transition hover:scale-[1.03] hover:text-white`}
+              >
+                Explore venues
+              </Link>
+              <Link
+                href="/contact"
+                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-white/65 bg-white/10 px-6 text-sm font-semibold text-white backdrop-blur-md transition hover:scale-[1.03] hover:bg-white/20 hover:text-white"
+              >
+                Plan my wedding
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="hero-slider-pagination" aria-label="Choose a hero slide">
-        {HERO_SLIDES.map((slide, index) => (
-          <button key={slide.src} type="button" className={index === activeIndex ? 'is-active' : ''}
-            aria-label={`Show slide ${index + 1}`} aria-current={index === activeIndex ? 'true' : undefined}
-            onClick={() => setActiveIndex(index)} />
-        ))}
-      </div>
-      <div className={`hero-scroll-cue${scrolled ? ' is-hidden' : ''}`} aria-hidden="true">
-        <span className="hero-scroll-mouse"><i /></span><span>Scroll</span><span className="hero-scroll-chevron">⌄</span>
+      {/* Scroll cue */}
+      <div
+        aria-hidden="true"
+        className={`absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 text-[10px] uppercase tracking-[.12em] text-white/80 transition-opacity duration-300 ${scrolled ? 'pointer-events-none opacity-0' : ''}`}
+      >
+        <span className="grid h-[22px] w-3.5 place-items-start justify-center rounded-full border border-white/65 pt-1">
+          <i className="h-[5px] w-0.5 animate-scroll-cue rounded-sm bg-[#d4af37] motion-reduce:animate-none" />
+        </span>
+        <span>Scroll</span>
       </div>
     </section>
   );
