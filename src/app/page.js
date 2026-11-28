@@ -94,11 +94,10 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid venue-grid" style={{ marginTop: 32 }}>
-            {venues.slice(0, 3).map((v, i) => (
+            {venues.slice(0, 3).map((v) => (
                 <VenueCard
                   venue={v}
-                  image={[weddingImages.mandap, weddingImages.decor, weddingImages.venue][i]}
-                  key={v.slug}
+                  key={`${v.citySlug}-${v.slug}`}
                 />
               ))}
           </div>

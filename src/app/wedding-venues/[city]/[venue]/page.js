@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { getCityBySlug, getVenue, getVenuesByCity, venues } from '@data/venues';
 import { ImageBox } from '@/components/Site';
 import VenueEnquiryForm from '@/components/VenueEnquiryForm';
+import VenueGallery from '@/components/VenueGallery';
 
 const baseUrl = 'https://weddingsvibe.com';
 
@@ -38,7 +39,6 @@ export default async function VenueDetailsPage({ params }) {
   const venue = getVenue(citySlug, venueSlug);
   if (!city || !venue) notFound();
 
-  const images = venue.images.length ? venue.images : [city.image];
   const similarVenues = getVenuesByCity(citySlug).filter((item) => item.slug !== venue.slug);
 
   return (
@@ -47,9 +47,7 @@ export default async function VenueDetailsPage({ params }) {
         <p className="crumb">
           <Link href="/">Home</Link> / <Link href={`/wedding-venues/${city.slug}`}>{city.name}</Link> / {venue.name}
         </p>
-        <div className="gallery">
-          {images.map((image, index) => <ImageBox key={`${image}-${index}`} image={image} alt={`${venue.name} wedding venue`} />)}
-        </div>
+        <VenueGallery images={venue.images} venueName={venue.name} />
 
         <div className="detail-layout">
           <article>
@@ -79,7 +77,7 @@ export default async function VenueDetailsPage({ params }) {
             <h2>More wedding venues in {city.name}</h2>
             <div className="grid venue-grid">
               {similarVenues.map((item) => (
-                <article className="card" key={item.slug}>
+                <article className="card" key={`${item.citySlug}-${item.slug}`}>
                   <ImageBox image={item.images[0]} alt={item.name} />
                   <div className="cardbody">
                     <h3>{item.name}</h3>

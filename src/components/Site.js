@@ -140,11 +140,6 @@ export function Header() {
                       className={isVenues || isServices ? 'nav-dd-trigger' : undefined}
                       aria-expanded={isVenues || isServices ? dropdownOpen : undefined}
                       aria-haspopup={isVenues || isServices ? 'true' : undefined}
-                      onClick={isVenues || isServices ? (event) => {
-                        if (window.matchMedia('(max-width: 1023px)').matches) return;
-                        event.preventDefault();
-                        openMegaMenu(isVenues ? 'venues' : 'services');
-                      } : undefined}
                     >
                       {item.label}
                       {(isVenues || isServices) && <svg className="dd-caret" width="11" height="11" viewBox="0 0 12 12" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M2.5 4.5 6 8l3.5-3.5" /></svg>}
@@ -166,7 +161,7 @@ export function Header() {
                   <div className="mobile-venue-links">
                     <Link href={`/wedding-venues/${city.slug}`}>View all in {city.name}</Link>
                     {getVenuesByCity(city.slug).map((venue) => (
-                      <Link key={venue.slug} href={`/wedding-venues/${venue.citySlug}/${venue.slug}`}>
+                      <Link key={`${venue.citySlug}-${venue.slug}`} href={`/wedding-venues/${venue.citySlug}/${venue.slug}`}>
                         <span>{venue.name}</span>
                         <small>{venue.location} · Starting from Rs {venue.startingPrice} Lakh</small>
                       </Link>
@@ -232,7 +227,7 @@ export function Header() {
                   </div>
                   <div className="vg city-venues-panel" key={selectedCity.slug}>
                     {selectedVenues.slice(0, 3).map((venue) => (
-                      <Link className="vc" href={`/wedding-venues/${venue.citySlug}/${venue.slug}`} key={venue.slug}>
+                      <Link className="vc" href={`/wedding-venues/${venue.citySlug}/${venue.slug}`} key={`${venue.citySlug}-${venue.slug}`}>
                         <div className="vc-image">
                           <ImageBox image={venue.images[0]} alt={venue.name} />
                         </div>

@@ -18,7 +18,7 @@ export default function VenuesPage() {
           {cities.map((city) => <Link className="chip" href={`/wedding-venues/${city.slug}`} key={city.slug}>{city.name}</Link>)}
         </div>
         <div className="grid venue-grid">
-          {venues.map((venue) => <VenueCard key={venue.slug} venue={venue} />)}
+          {venues.map((venue) => <VenueCard key={`${venue.citySlug}-${venue.slug}`} venue={venue} />)}
         </div>
       </div>
     </section>

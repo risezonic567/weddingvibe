@@ -21,8 +21,8 @@ function useReveal(threshold = 0.4) {
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce || !('IntersectionObserver' in window)) {
-      setShown(true);
-      return;
+      const frame = window.requestAnimationFrame(() => setShown(true));
+      return () => window.cancelAnimationFrame(frame);
     }
 
     const io = new IntersectionObserver(

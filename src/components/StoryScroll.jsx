@@ -14,8 +14,8 @@ export default function StoryScroll() {
 
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (reduce || !('IntersectionObserver' in window)) {
-      setOpen(true);
-      return;
+      const frame = window.requestAnimationFrame(() => setOpen(true));
+      return () => window.cancelAnimationFrame(frame);
     }
 
     // jab section screen ke neeche se ~30% andar aa jaye tab khule

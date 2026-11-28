@@ -45,7 +45,12 @@ export default async function CityVenuesPage({ params }) {
 
         <div className="grid venue-grid">
           {cityVenues.map((venue) => (
-            <article className="card" key={venue.slug}>
+            <article className="card venue-card" key={`${venue.citySlug}-${venue.slug}`}>
+              <Link
+                className="venue-card-link"
+                href={`/wedding-venues/${venue.citySlug}/${venue.slug}`}
+                aria-label={`View ${venue.name} in ${city.name}`}
+              />
               <ImageBox image={venue.images[0]} alt={venue.name} />
               <div className="cardbody">
                 <h2>{venue.name}</h2>
@@ -53,14 +58,14 @@ export default async function CityVenuesPage({ params }) {
                 <p>{venue.capacity}</p>
                 <strong>Starting from Rs {venue.startingPrice} Lakh</strong>
               </div>
-              <Link className="btn" href={`/wedding-venues/${city.slug}/${venue.slug}#enquiry`}>Get Quote</Link>
+              <Link className="btn venue-card-quote" href={`/wedding-venues/${venue.citySlug}/${venue.slug}#enquiry`}>Get Quote</Link>
             </article>
           ))}
         </div>
 
         <div className="city-cta">
           <span>Looking for a smaller budget?</span>{' '}
-          <Link className="btn btn-outline" href="/contact">Tell us your budget, we'll suggest options</Link>
+          <Link className="btn btn-outline" href="/contact">Tell us your budget, we&apos;ll suggest options</Link>
         </div>
 
         <section className="seo-copy">
