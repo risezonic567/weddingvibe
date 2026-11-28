@@ -1,29 +1,32 @@
-/** @type {import('next').NextConfig} */
+﻿/** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* config options here */
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'images.pexels.com' },
     ],
   },
-  output: "standalone",
+  output: 'standalone',
   cacheComponents: true,
   partialPrefetching: true,
-  async rewrites() {
+  async redirects() {
     return [
-      { source: '/wedding-venues-in-:city', destination: '/wedding-venues-in/:city' },
-      { source: '/wedding-venues-in-:city/:area', destination: '/wedding-venues-in/:city/:area' },
-    ]
+      { source: '/wedding-venues-in/:city', destination: '/wedding-venues/:city', statusCode: 301 },
+      { source: '/wedding-venues-in/:city/:area', destination: '/wedding-venues/:city', statusCode: 301 },
+      { source: '/wedding-venues-in-:city', destination: '/wedding-venues/:city', statusCode: 301 },
+      { source: '/wedding-venues-in-:city/:area', destination: '/wedding-venues/:city', statusCode: 301 },
+      { source: '/venues/:city/:slug', destination: '/wedding-venues/:city', statusCode: 301 },
+    ];
   },
   turbopack: {
     rules: {
-      "*.css": {
-        loaders: ["@tailwindcss/turbopack"],
-        as: "*.css",
+      '*.css': {
+        loaders: ['@tailwindcss/turbopack'],
+        as: '*.css',
       },
     },
   },
 };
 
 export default nextConfig;
+

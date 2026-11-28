@@ -482,18 +482,6 @@ textarea:focus-visible {
   font-weight: 400
 }
 
-.rating {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  margin-bottom: 8px
-}
-
-.rating span {
-  font-weight: 400;
-  color: var(--muted)
-}
-
 .venue-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr))
 }
@@ -813,7 +801,7 @@ textarea:focus-visible {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.1fr 1.2fr 1fr 1fr;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 36px;
   align-items: start
 }
@@ -978,8 +966,7 @@ textarea:focus-visible {
 
 .form input,
 .form textarea,
-.form select,
-.filters select {
+.form select {
   width: 100%;
   min-height: 46px;
   border: 1px solid #D9D3C6;
@@ -1038,21 +1025,6 @@ textarea:focus-visible {
   color: var(--muted);
   font-size: 13px;
   margin: 0 0 20px
-}
-
-.filters {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin: 24px 0
-}
-
-.filters label {
-  min-width: 190px;
-  display: grid;
-  gap: 5px;
-  color: var(--muted);
-  font-size: 13px
 }
 
 .seo-copy {
@@ -1912,48 +1884,6 @@ textarea:focus-visible {
   }
 }
 
-.checks {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-  margin: 0 0 18px
-}
-
-.checks label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  font-size: 14px;
-  color: var(--muted)
-}
-
-.checks input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--ink)
-}
-
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  margin: 32px 0
-}
-
-.pagination button:disabled {
-  opacity: .45;
-  cursor: not-allowed
-}
-
-.empty {
-  padding: 35px;
-  background: var(--cream);
-  border-radius: 14px;
-  color: var(--muted)
-}
-
 .brand {
   display: flex;
   align-items: center;
@@ -2122,7 +2052,7 @@ textarea:focus-visible {
 }
 
 .footer-grid {
-  grid-template-columns: 1.1fr 1.2fr 1fr 1fr
+  grid-template-columns: repeat(5, minmax(0, 1fr))
 }
 
 @media(max-width:900px) {

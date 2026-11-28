@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { services } from '@/data/site';
+import { services } from '@/data/content';
 import ServicesCatalog from '@/components/ServicesCatalog';
 
 export function generateStaticParams() {

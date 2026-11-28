@@ -5,7 +5,9 @@ import { useEffect, useRef, useState } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { cities, services, site, venues } from '@/data/site';
+import { cities, getVenuesByCity } from '@data/venues';
+import { services } from '@/data/content';
+import { site } from '@/data/site';
 import { weddingImages } from '@/data/wedding-images';
 import LocationThumb from '@/components/LocationThumb';
 
@@ -29,10 +31,6 @@ function Brand({ footer = false }) {
   );
 }
 
-const venuesByCity = Object.fromEntries(
-  cities.map((city) => [city.slug, venues.filter((venue) => venue.citySlug === city.slug)])
-);
-
 const serviceMenuImages = {
   decor: '/images/wedding/Decor.jpg.jpeg',
   'photography-film': '/images/wedding/Photography%20%26%20film.jpg.jpeg',
@@ -42,20 +40,11 @@ const serviceMenuImages = {
   'dj-music': '/images/wedding/DJ%20%26%20music.jpg.jpeg',
 };
 
-const venueTypes = [
-  'Banquet halls',
-  'Resorts',
-  'Farmhouses',
-  'Palaces',
-  'Beach venues',
-];
-
 export function Header() {
   const [open, setOpen] = useState(false);
   const [venuesOpen, setVenuesOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [activeCity, setActiveCity] = useState(cities[0].slug);
-  const [activeVenueType, setActiveVenueType] = useState('');
+  const [activeCity, setActiveCity] = useState(cities[0]?.slug || '');
   const [scrolled, setScrolled] = useState(false);
   const navShellRef = useRef(null);
   const closeTimer = useRef(null);
@@ -63,7 +52,7 @@ export function Header() {
   const pathname = usePathname();
   const isHome = pathname === '/';
   const selectedCity = cities.find((city) => city.slug === activeCity) || cities[0];
-  const selectedVenues = venuesByCity[selectedCity.slug] || [];
+  const selectedVenues = selectedCity ? getVenuesByCity(selectedCity.slug) : [];
 
   useEffect(() => {
     const updateScroll = () => setScrolled(window.scrollY > 24);
@@ -172,14 +161,14 @@ export function Header() {
                   <summary>
                     <LocationThumb cityName={city.name} />
                     <span>{city.name}</span>
-                    <small>{venuesByCity[city.slug].length} venues</small>
+                    <small>{getVenuesByCity(city.slug).length} venues</small>
                   </summary>
                   <div className="mobile-venue-links">
-                    <Link href={`/wedding-venues-in/${city.slug}`}>View all in {city.name} →</Link>
-                    {venuesByCity[city.slug].map((venue) => (
-                      <Link key={venue.slug} href={`/venues/${venue.citySlug}/${venue.slug}`}>
+                    <Link href={`/wedding-venues/${city.slug}`}>View all in {city.name}</Link>
+                    {getVenuesByCity(city.slug).map((venue) => (
+                      <Link key={venue.slug} href={`/wedding-venues/${venue.citySlug}/${venue.slug}`}>
                         <span>{venue.name}</span>
-                        <small>{venue.area} · ₹{venue.pricePerPlate.toLocaleString('en-IN')}/plate</small>
+                        <small>{venue.location} · Starting from Rs {venue.startingPrice} Lakh</small>
                       </Link>
                     ))}
                   </div>
@@ -225,10 +214,10 @@ export function Header() {
                       onMouseEnter={() => setActiveCity(city.slug)}
                       onFocus={() => setActiveCity(city.slug)}
                     >
-                      <Link href={`/wedding-venues-in/${city.slug}`}>
+                      <Link href={`/wedding-venues/${city.slug}`}>
                         <LocationThumb cityName={city.name} />
                         <span className="city-name">{city.name}</span>
-                        <small>{venuesByCity[city.slug].length} venues</small>
+                        <small>{getVenuesByCity(city.slug).length} venues</small>
                       </Link>
                     </li>
                   ))}
@@ -237,30 +226,26 @@ export function Header() {
                   <div className="chd">
                     <div>
                       <h3>Wedding venues in {selectedCity.name}</h3>
-                      <p>{selectedVenues.length} handpicked venues · Starting from ₹{Math.min(...selectedVenues.map((venue) => venue.pricePerPlate)).toLocaleString('en-IN')}/plate</p>
+                      <p>{selectedVenues.length} wedding venues to explore</p>
                     </div>
-                    <Link className="underline" href={`/wedding-venues-in/${selectedCity.slug}`}>View all in {selectedCity.name} <span aria-hidden="true">→</span></Link>
+                    <Link className="underline" href={`/wedding-venues/${selectedCity.slug}`}>View all in {selectedCity.name}</Link>
                   </div>
                   <div className="vg city-venues-panel" key={selectedCity.slug}>
                     {selectedVenues.slice(0, 3).map((venue) => (
-                      <Link className="vc" href={`/venues/${venue.citySlug}/${venue.slug}`} key={venue.slug}>
+                      <Link className="vc" href={`/wedding-venues/${venue.citySlug}/${venue.slug}`} key={venue.slug}>
                         <div className="vc-image">
-                          <Image src={venue.images[0]} alt={venue.name} fill sizes="(max-width: 1023px) 30vw, 260px" />
-                          <span className="vc-type-badge">{venue.type.charAt(0).toUpperCase() + venue.type.slice(1)}</span>
+                          <ImageBox image={venue.images[0]} alt={venue.name} />
                         </div>
                         <strong>{venue.name}</strong>
-                        <small>{venue.area}{venue.capacity?.min && venue.capacity?.max ? ` · ${venue.capacity.min}–${venue.capacity.max} guests` : ''}</small>
-                        <b className="vc-price">₹{venue.pricePerPlate.toLocaleString('en-IN')}/plate</b>
+                        <small>{venue.location} · {venue.capacity}</small>
+                        <b className="vc-price">Starting from Rs {venue.startingPrice} Lakh</b>
                       </Link>
                     ))}
                   </div>
                 </div>
               </div>
               <div className="mfoot">
-                <span>Browse by type</span>
-                {venueTypes.map((type) => (
-                  <Link className={`chip${activeVenueType === type ? ' active' : ''}`} href="/venues" key={type} onClick={() => setActiveVenueType(type)}>{type}</Link>
-                ))}
+                <span>Browse all venues</span>
                 <Link className="mega-explore-all" href="/venues">Explore all venues <span aria-hidden="true">→</span></Link>
               </div>
             </div>
@@ -354,6 +339,15 @@ export function Footer() {
               </a>
             </div>
             <p className="hours">{site.hours}</p>
+          </div>
+
+          <div>
+            <h4>Wedding venues by city</h4>
+            <div className="ft-links">
+              {cities.map((city) => (
+                <Link key={city.slug} href={`/wedding-venues/${city.slug}`}>{city.name}</Link>
+              ))}
+            </div>
           </div>
 
           <div>
@@ -472,20 +466,15 @@ export function ImageBox({ image = weddingImages.couple, className = '', alt = '
 
 export function VenueCard({ venue, image = venue.images[0] }) {
   return (
-    <Link href={`/venues/${venue.citySlug}/${venue.slug}`} className="card">
+    <Link href={`/wedding-venues/${venue.citySlug}/${venue.slug}`} className="card">
       <ImageBox image={image} alt={venue.name} />
       <div className="cardbody">
-        <div className="rating">
-          ★ {venue.rating} <span>({venue.reviewCount} reviews)</span>
-        </div>
         <h3>{venue.name}</h3>
         <p className="venue-location">
-          <LocationThumb cityName={venue.city} />
-          {venue.area}, {venue.city} · {venue.capacity.max} guests
+          <LocationThumb cityName={cities.find((city) => city.slug === venue.citySlug)?.name || ''} />
+          {venue.location} · {venue.capacity}
         </p>
-        <strong>
-          ₹{venue.pricePerPlate.toLocaleString('en-IN')} <small>/ plate</small>
-        </strong>
+        <strong>Starting from Rs {venue.startingPrice} Lakh</strong>
       </div>
     </Link>
   );

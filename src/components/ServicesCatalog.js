@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { services, faqs } from '@/data/site';
+import { services, faqs } from '@/data/content';
 import { ImageBox, EnquiryForm } from '@/components/Site';
 
 export default function ServicesCatalog({ activeSlug = null }) {

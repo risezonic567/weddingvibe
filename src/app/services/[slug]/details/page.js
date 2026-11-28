@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { services } from '@/data/site';
+import { services } from '@/data/content';
 import { ImageBox, EnquiryForm } from '@/components/Site';
 
 export function generateStaticParams() {

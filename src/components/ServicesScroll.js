@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { services } from '@/data/site';
+import { services } from '@/data/content';
 
 const serviceImages = {
   decor: '/images/wedding/Decor.jpg.jpeg',

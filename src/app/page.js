@@ -1,5 +1,6 @@
-import Link from 'next/link';
-import { cities, venues, weddings, testimonials, faqs } from '@/data/site';
+﻿import Link from 'next/link';
+import { cities, venues } from '@data/venues';
+import { weddings, testimonials, faqs } from '@/data/content';
 import { ImageBox, VenueCard, BudgetPlanner } from '@/components/Site';
 import LocationThumb from '@/components/LocationThumb';
 import { weddingImages } from '@/data/wedding-images';
@@ -12,21 +13,19 @@ import StoryScroll from '@/components/StoryScroll';
 export const metadata = {
   title: 'Wedding venues and services across India',
   description:
-    'Compare verified wedding venues, check prices per plate and connect with trusted wedding teams across India.',
+    'Explore wedding venues across India and connect with a planning team for a personalised shortlist.',
 };
 
 const TRUST = [
-  { value: '500+', label: 'Verified venues' },
+  { value: String(venues.length), label: 'Venue options' },
   { value: '10,000+', label: 'Weddings planned' },
-  { value: '4.8★', label: 'Average rating' },
+  { value: 'One', label: 'Enquiry for venue help' },
   { value: 'Free', label: 'Planning call' },
 ];
 
-const VENUE_TYPES = ['Banquet halls', 'Resorts', 'Farmhouses', 'Palaces', 'Beach venues', 'Destination'];
-
 const WHY = [
   ['Verified venues', 'Every venue is checked before it is listed, so you compare real options.'],
-  ['Clear prices per plate', 'See pricing upfront and avoid surprises later.'],
+  ['Starting prices shown', 'See a clear venue starting price before you send an enquiry.'],
   ['One enquiry, many venues', 'Send a single enquiry instead of making endless calls.'],
   ['A planner by your side', 'One point of contact from the first shortlist to the booking.'],
   ['Vendors in one place', 'Decor, photography, catering, mehendi and music, all under one roof.'],
@@ -50,31 +49,27 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Cities + venue types */}
+      {/* Cities and venue links */}
       <section className="sec">
         <div className="wrap center">
           <h2 className="h2">Any location in mind?</h2>
           <p className="sub">Choose a wedding venue in your city</p>
           <div className="arches">
             {cities.map((c) => (
-              <Link className="arch-item" href={`/wedding-venues-in/${c.slug}`} key={c.slug}>
+              <Link className="arch-item" href={`/wedding-venues/${c.slug}`} key={c.slug}>
                 <span className="arch">
                   <LocationThumb cityName={c.name} className="arch-photo" />
                 </span>
                 <strong>{c.name}</strong>
-                <small>{venues.filter((v) => v.city === c.name).length} venues</small>
+                <small>{venues.filter((venue) => venue.citySlug === c.slug).length} venues</small>
               </Link>
             ))}
           </div>
 
           <div className="home-types">
-            <p>Or browse by venue type</p>
+            <p>Or explore venues by city</p>
             <div className="type-chips">
-              {VENUE_TYPES.map((x) => (
-                <Link className="chip" href="/venues" key={x}>
-                  {x}
-                </Link>
-              ))}
+              {cities.map((city) => <Link className="chip" href={`/wedding-venues/${city.slug}`} key={city.slug}>{city.name}</Link>)}
             </div>
           </div>
 
@@ -99,10 +94,7 @@ export default function Home() {
             </Link>
           </div>
           <div className="grid venue-grid" style={{ marginTop: 32 }}>
-            {venues
-              .filter((v) => v.featured)
-              .slice(0, 3)
-              .map((v, i) => (
+            {venues.slice(0, 3).map((v, i) => (
                 <VenueCard
                   venue={v}
                   image={[weddingImages.mandap, weddingImages.decor, weddingImages.venue][i]}
@@ -123,10 +115,10 @@ export default function Home() {
         <div className="wrap">
           <div className="center">
             <h2 className="h2">How it works</h2>
-            <p className="sub">From first idea to confirmed booking in four simple steps.</p>
+            <p className="sub">From first idea to a venue shortlist in four simple steps.</p>
           </div>
           <div className="hw">
-            {[['01', 'Tell us what you need', 'Share your city, date, guest count and budget. It takes about two minutes.'], ['02', 'Compare venues', 'See matching venues side by side with photos and prices per plate.'], ['03', 'Talk to a planner', 'Get a free consultation and arrange site visits for your shortlist.'], ['04', 'Book and relax', 'Confirm your venue and add decor, catering and more. Pay in stages.']].map(([n, t, d], i) => (
+            {[['01', 'Tell us what you need', 'Share your city, date, guest count and budget. It takes about two minutes.'], ['02', 'Explore venues', 'Review photos, capacity, spaces and starting prices.'], ['03', 'Talk to a planner', 'Get a free consultation and arrange site visits for your shortlist.'], ['04', 'Plan with confidence', 'Choose a venue with help from your wedding planning team.']].map(([n, t, d], i) => (
               <article className="hw-step" key={n}>
                 <div className="hw-num">{n}</div>
                 <span className="hw-lbl">Step {i + 1}</span>
@@ -202,9 +194,9 @@ export default function Home() {
               A thoughtful first estimate, shaped around your guest list, city and the celebration you have in mind.
             </p>
             <div className="budget-trust">
-              <span><i aria-hidden="true">✦</i>Free planning call</span>
-              <span><i aria-hidden="true">✦</i>Verified venues only</span>
-              <span><i aria-hidden="true">✦</i>No hidden charges</span>
+              <span><i aria-hidden="true">âœ¦</i>Free planning call</span>
+              <span><i aria-hidden="true">âœ¦</i>Verified venues only</span>
+              <span><i aria-hidden="true">âœ¦</i>No hidden charges</span>
             </div>
           </div>
           <div className="budget-card">
@@ -253,7 +245,7 @@ export default function Home() {
             {(testimonials || []).slice(0, 3).map((t, i) => (
               <figure className="rv-card" key={t.name || i}>
                 <span className="rv-quote" aria-hidden="true">&ldquo;</span>
-                <div className="rv-stars" aria-label="5 out of 5 stars">★★★★★</div>
+                <div className="rv-stars" aria-label="5 out of 5 stars">â˜…â˜…â˜…â˜…â˜…</div>
                 <blockquote>{t.quote || t.text || t.review}</blockquote>
                 <figcaption>
                   <span className="rv-avatar" aria-hidden="true">
@@ -310,3 +302,4 @@ export default function Home() {
     </>
   );
 }
+
