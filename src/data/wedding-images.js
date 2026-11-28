@@ -15,14 +15,3 @@ export const weddingImages = {
   celebration: unsplash('photo-1759719440818-98681ed4c6b8'),
 };
 
-export const locationImages = {
-  'jim-corbett': unsplash('photo-1780127324047-13687fb584d2'),
-  'delhi-ncr': unsplash('photo-1705861143528-beeb8df36bbc'),
-  rishikesh: unsplash('photo-1793765321137-975858f3daed'),
-  udaipur: unsplash('photo-1695956353120-54ce5e91632b'),
-  jaipur: unsplash('photo-1524230507669-5ff97982bb5e'),
-  uttarakhand: unsplash('photo-1464822759023-fed622ff2c3b'),
-  jaisalmer: unsplash('photo-1777816267139-f26e43bedaf7'),
-  goa: unsplash('photo-1582972236019-ea4af5ffe587'),
-  mumbai: unsplash('photo-1668577593918-43e743cad2f8'),
-};

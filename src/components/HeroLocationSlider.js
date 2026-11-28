@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { cities, venues } from '@data/venues';
 
 const HERO_VIDEO = '/images/video/Wedding Vibe Banner01.mp4';
 
-const HERO_PROOF = { venues: '500+', weddings: '10,000+', rating: '4.8' };
+const HERO_PROOF = { weddings: '10,000+' };
 
 const enter = 'opacity-0 animate-fade-up motion-reduce:animate-none motion-reduce:opacity-100';
 const gold = 'bg-[linear-gradient(145deg,#d2b570,#987137)] border border-[#e1c57d] text-white';
@@ -50,7 +51,7 @@ export default function HeroLocationSlider() {
               Find the venue that feels like <em>your wedding.</em>
             </h1>
             <p className={`${enter} [animation-delay:.28s] mt-4 max-w-md text-sm text-white/85 md:text-base`}>
-              Compare verified venues, check prices per plate and send one enquiry. No endless calls.
+              Explore venue details and starting prices, then send one enquiry to our planning team.
             </p>
           </div>
 
@@ -59,8 +60,8 @@ export default function HeroLocationSlider() {
             <div className="grid grid-cols-3 gap-6 md:gap-10">
               {[
                 [HERO_PROOF.weddings, 'weddings planned'],
-                [HERO_PROOF.rating, 'google rating'],
-                [HERO_PROOF.venues, 'verified venues'],
+                [String(cities.length), 'cities listed'],
+                [String(venues.length), 'venue options'],
               ].map(([num, label]) => (
                 <div key={label}>
                   <div className="font-[family-name:var(--font-head)] text-2xl font-semibold md:text-4xl">{num}</div>

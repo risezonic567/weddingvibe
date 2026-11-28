@@ -1,43 +1,28 @@
-import { weddingImages } from './wedding-images';
-
-export const site = { name: 'Weddings Vibe', tagline: 'Wedding venues and services, one enquiry away.', address: 'Delhi Office — RZ11/D, Upper Ground Floor Opp. Palam Metro Station Gate No 3, Palam Dwarka Road, Delhi, 110045', phone: '+91 92667 30494', phoneLink: '+919266730494', phone2: '+91 93105 40905', phoneLink2: '+919310540905', whatsapp: '919266730494', email: 'info.vicoh@gmail.com', mapsQuery: 'RZ11/D Upper Ground Floor Opp Palam Metro Station Gate No 3 Palam Dwarka Road Delhi 110045', instagram: '@weddingsvibe', socials: { instagram: 'https://instagram.com/weddingsvibe', linkedin: 'https://linkedin.com', youtube: 'https://youtube.com', pinterest: 'https://pinterest.com' }, hours: 'Monday to Saturday, 10 am – 7 pm', nav: [{ label: 'Venues', href: '/venues' } ,{ label: 'Services', href: '/services' }, { label: 'Real Weddings', href: '/real-weddings' }, { label: 'Blog', href: '/blog' }, { label: 'Contact', href: '/contact' }] };
-
-const cityInfo = [
-    ['Jim Corbett', 'Ramnagar', 'Dhikuli', 'Corbett Resort Area'],
-    ['Delhi NCR', 'Dwarka', 'Saket', 'Chattarpur'],
-    ['Rishikesh', 'Tapovan', 'Lakshman Jhula', 'Muni Ki Reti'],
-    ['Udaipur', 'Lake Pichola', 'Fateh Sagar', 'Hiran Magri'],
-    ['Jaipur', 'Amer Road', 'Tonk Road', 'Civil Lines'],
-    ['Uttarakhand', 'Dehradun', 'Mussoorie', 'Nainital'],
-    ['Jaisalmer', 'Sam Sand Dunes', 'Fort Area', 'Khuri'],
-    ['Goa', 'Candolim', 'Assagao', 'Vagator'],
-];
-
-export const cities = cityInfo.map(([name, ...areas], i) => ({ name, slug: name.toLowerCase().replaceAll(' ', '-'), areas, landmark: ['Jim Corbett National Park', 'India Gate', 'Laxman Jhula', 'City Palace', 'Hawa Mahal', 'Mussoorie Hills', 'Jaisalmer Fort', 'Fort Aguada'][i] }));
-
-const venueNames = ['The Grand Pavilion','Ivory Courtyard','Gardenia Estate'];
-
-const venueTypes = ['banquet','palace','farmhouse','resort','beach','destination'];
-
-export const venues = cities.flatMap((city,ci)=>venueNames.map((label,vi)=>({slug:`${city.slug}-${['grand-pavilion','ivory-courtyard','gardenia-estate'][vi]}`,name:`${city.name} ${label}`,city:city.name,citySlug:city.slug,area:city.areas[vi],type:venueTypes[(ci+vi)%venueTypes.length],pricePerPlate:900+ci*150+vi*400,capacity:{min:100+vi*100,max:500+ci*100+vi*250},rating:(4.5+((ci+vi)%5)*0.1).toFixed(1),reviewCount:86+ci*17+vi*12,veg:true,nonVeg:vi!==1,ac:true,parking:vi!==2,amenities:['Bridal suite','In-house catering','Valet parking','Indoor and outdoor spaces'],about:[`An elegant celebration setting in ${city.name}, thoughtfully designed for joyful gatherings and unforgettable wedding days.`,`Our experienced event team makes every detail feel effortless, from your first visit through the final farewell.`],images:[[weddingImages.venue,weddingImages.ceremony,weddingImages.mandap][vi],weddingImages.couple,weddingImages.decor,weddingImages.haldi,weddingImages.celebration],featured:vi===0||ci===1}))) ;
-const serviceInfo=[
-  ['Decor','Stage, mandap, entry and table styling to match your theme.',35000,weddingImages.decor,'Thoughtful mandap, stage and tablescape styling.'],
-  ['Photography & film','Candid photos, cinematic films and pre-wedding shoots.',45000,weddingImages.couple,'Candid photography and films that hold every moment.'],
-  ['Bridal makeup','Trial session, bridal look and touch-ups on the day.',18000,weddingImages.makeup,'Bridal looks, trials and on-day touch-ups.'],
-  ['Catering','Veg and non-veg menus, live counters and tasting before you book.',950,weddingImages.buffet,'Menus and live counters your guests will remember.'],
-  ['Mehendi artists','Bridal and guest mehendi, traditional and modern designs.',12000,weddingImages.mehendi,'Beautiful bridal and guest mehendi designs.'],
-  ['DJ & music','DJ, dhol, live band and sangeet choreography.',22000,weddingImages.music,'DJs, dhol and live music for every celebration.'],
-  // ['Wedding planning','A dedicated planner to coordinate the details of your day.',30000,weddingImages.venue,'Calm coordination from first plan to last dance.'],
-  // ['Choreography','Personalised sangeet performances for family and friends.',15000,weddingImages.celebration,'Fun, easy-to-learn routines for your sangeet.'],
-];
-
-export const services=serviceInfo.map(([name,description,from,image,shortDescription],i)=>({name,slug:['decor','photography-film','bridal-makeup','catering','mehendi-artists','dj-music','wedding-planning','choreography'][i],description,shortDescription,from,image,packages:['Essential','Signature','Luxe'].map((tier,j)=>({name:tier,price:from*(j+1),inclusions:[['Planning consultation','Core service coverage','Dedicated coordinator','Setup and teardown'][j%4],['Personalised design or schedule','Professional team','Edited delivery'][j%3],['Premium materials and upgrades','Priority support','On-day coordination'][j%3]]})),faqs:[['Can I book this service without a venue?','Absolutely. Our team can help with a standalone service or coordinate it with your venue booking.'],['Can I customise a package?','Yes. Share your plans and we will tailor the inclusions and quote.'],['How early should I book?','Six to twelve months is ideal for popular dates; ask us about your date.'],['Which cities do you cover?','We currently help couples across Jim Corbett, Delhi NCR, Rishikesh, Udaipur, Jaipur, Uttarakhand, Jaisalmer and Goa.'],['Is a consultation included?','Yes, your first consultation and estimate are complimentary.']]}));
-
-export const weddings=Array.from({length:6},(_,i)=>({slug:['a-lakeside-udaipur-celebration','garden-wedding-in-goa','modern-jaipur-wedding','delhi-courtyard-celebration','bengaluru-evening-vows','mumbai-rooftop-wedding'][i],title:['A lakeside celebration in Udaipur','A garden wedding in Goa','A modern Jaipur wedding','An intimate Delhi courtyard','Evening vows in Bengaluru','A rooftop wedding in Mumbai'][i],couple:['Aarav & Meera','Kabir & Anya','Rohan & Diya','Arjun & Tara','Dev & Nisha','Ishaan & Rhea'][i],city:cities[(i+7)%8].name,venue:venues[i*3],images:[weddingImages.couple,weddingImages.haldi,weddingImages.ceremony,weddingImages.mehendi]}));
-const blogTitles=['A practical guide to choosing your wedding venue','How to plan a beautiful wedding on a budget','Wedding decor ideas that feel personal','Your wedding photography timeline, made simple','A city-by-city destination wedding guide','Questions to ask before booking a caterer'];
-
-export const posts=blogTitles.map((title,i)=>({slug:['choosing-your-wedding-venue','wedding-budget-planning','personal-wedding-decor','wedding-photography-timeline','destination-wedding-guide','questions-for-your-caterer'][i],title,excerpt:`Thoughtful advice from our planning team to make your ${['venue search','celebration budget','wedding decor','photo schedule','destination plans','menu tasting'][i]} easier.`,image:[weddingImages.mandap,weddingImages.couple,weddingImages.decor,weddingImages.bridal,weddingImages.ceremony,weddingImages.buffet][i],body:[`A wedding should feel like you. Start by listing the moments and people that matter most, then let your venue and vendor choices support those priorities.`,`Set your date range, guest count and comfortable spending limit before you begin shortlisting. Ask vendors for clear written inclusions, and leave a little room for the unexpected.`,`Visit in person when possible and picture the flow of your day. Our team can help compare options and connect the details.`]}));
-
-export const testimonials=[{name:'Aditi & Karan',quote:'We found a beautiful venue and a team who understood exactly what we wanted. The whole process felt calm.'},{name:'Simran & Varun',quote:'Clear pricing and thoughtful recommendations made planning from another city so much easier.'},{name:'Megha & Rishabh',quote:'Every detail came together wonderfully. We could enjoy our wedding knowing the team had it handled.'}];
-
-export const faqs=[['Can I book a venue and services together?','Yes. We can coordinate your venue and the services you need through one enquiry.'],['Do you help with venue visits?','We can arrange a shortlist and coordinate visits around your schedule.'],['Are the prices fixed?','Prices are indicative and vary with date, guest count and package inclusions.'],['Which cities do you serve?','Jim Corbett, Delhi NCR, Rishikesh, Udaipur, Jaipur, Uttarakhand, Jaisalmer and Goa.'],['How do I get started?','Tell us your date, city and guest count. A planner will call with suitable options.'],['Can I customise packages?','Yes, packages are a starting point and can be tailored to your plans.'],['Is the first consultation free?','Yes, the first consultation and shortlist are complimentary.'],['How can venues join?','Use our List your venue form and our partnerships team will be in touch.']];
+// Keep shared website details here, such as contact information and navigation.
+export const site = {
+  name: 'Weddings Vibe',
+  tagline: 'Wedding venues and services, one enquiry away.',
+  address: 'Delhi Office — RZ11/D, Upper Ground Floor Opp. Palam Metro Station Gate No 3, Palam Dwarka Road, Delhi, 110045',
+  phone: '+91 92667 30494',
+  phoneLink: '+919266730494',
+  phone2: '+91 93105 40905',
+  phoneLink2: '+919310540905',
+  whatsapp: '919266730494',
+  email: 'info.vicoh@gmail.com',
+  mapsQuery: 'RZ11/D Upper Ground Floor Opp Palam Metro Station Gate No 3 Palam Dwarka Road Delhi 110045',
+  instagram: '@weddingsvibe',
+  socials: {
+    instagram: 'https://instagram.com/weddingsvibe',
+    linkedin: 'https://linkedin.com',
+    youtube: 'https://youtube.com',
+    pinterest: 'https://pinterest.com',
+  },
+  hours: 'Monday to Saturday, 10 am – 7 pm',
+  nav: [
+    { label: 'Venues', href: '/venues' },
+    { label: 'Services', href: '/services' },
+    { label: 'Real Weddings', href: '/real-weddings' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Contact', href: '/contact' },
+  ],
+};

@@ -452,8 +452,198 @@ textarea:focus-visible {
   display: block
 }
 
+.venue-card {
+  position: relative;
+  transition: transform .2s ease, box-shadow .2s ease
+}
+
+.venue-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(31, 29, 24, .12)
+}
+
+.venue-card-link {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+  cursor: pointer
+}
+
+.venue-card-link:focus-visible {
+  outline: 3px solid var(--gold, #b08d3c);
+  outline-offset: 3px
+}
+
+.venue-card-quote {
+  position: relative;
+  z-index: 2;
+}
+
+.venue-card-actions {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 20px 20px
+}
+
+.venue-card-details {
+  padding-right: 20px;
+  padding-left: 20px
+}
+
+.venue-gallery {
+  margin: 20px 0 35px
+}
+
+.venue-gallery-main,
+.venue-gallery-placeholder {
+  height: min(58vw, 520px);
+  min-height: 260px;
+  border-radius: 18px;
+  overflow: hidden
+}
+
+.venue-gallery-placeholder {
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: var(--muted);
+  background: var(--tint)
+}
+
+.venue-gallery-thumbnails {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  margin-top: 12px;
+  padding: 2px 2px 8px
+}
+
+.venue-gallery-thumbnail {
+  flex: 0 0 112px;
+  height: 76px;
+  padding: 0;
+  overflow: hidden;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer
+}
+
+.venue-gallery-thumbnail.is-active {
+  border-color: var(--gold, #b08d3c)
+}
+
+.venue-gallery-thumbnail .ph {
+  width: 100%;
+  height: 100%;
+  min-height: 0
+}
+
+.venue-gallery-open {
+  margin-top: 14px
+}
+
+.venue-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 56px 72px;
+  background: rgba(14, 13, 12, .94)
+}
+
+.venue-lightbox-image {
+  width: min(100%, 1100px);
+  height: min(78vh, 760px);
+  min-height: 220px;
+  border-radius: 12px;
+  overflow: hidden
+}
+
+.venue-lightbox-content {
+  width: 100%;
+  display: grid;
+  place-items: center
+}
+
+.venue-lightbox-close,
+.venue-lightbox-arrow {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid rgba(255, 255, 255, .55);
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(0, 0, 0, .4);
+  font-size: 30px;
+  cursor: pointer
+}
+
+.venue-lightbox-close {
+  top: 20px;
+  right: 22px
+}
+
+.venue-lightbox-arrow.previous {
+  left: 18px
+}
+
+.venue-lightbox-arrow.next {
+  right: 18px
+}
+
+.venue-lightbox-count {
+  position: absolute;
+  bottom: 18px;
+  color: #fff;
+  font-size: 14px
+}
+
+.city-venue-card {
+  color: inherit;
+  text-decoration: none;
+  transition: transform .2s ease, box-shadow .2s ease
+}
+
+.city-venue-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(31, 29, 24, .12)
+}
+
 .card>.ph {
   height: 220px
+}
+
+.venue-card-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background: #f1ece2;
+}
+
+.venue-card-image img {
+  object-fit: cover;
+  transition: transform .35s ease;
+}
+
+.venue-card-image-placeholder {
+  position: absolute;
+  inset: 0;
+  background: #f1ece2;
+}
+
+.venue-card:hover .venue-card-image img,
+.vc:hover .venue-card-image img {
+  transform: scale(1.05);
 }
 
 .cardbody {
@@ -480,18 +670,6 @@ textarea:focus-visible {
 .cardbody strong small {
   color: var(--muted);
   font-weight: 400
-}
-
-.rating {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  margin-bottom: 8px
-}
-
-.rating span {
-  font-weight: 400;
-  color: var(--muted)
 }
 
 .venue-grid {
@@ -813,7 +991,7 @@ textarea:focus-visible {
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.1fr 1.2fr 1fr 1fr;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 36px;
   align-items: start
 }
@@ -978,8 +1156,7 @@ textarea:focus-visible {
 
 .form input,
 .form textarea,
-.form select,
-.filters select {
+.form select {
   width: 100%;
   min-height: 46px;
   border: 1px solid #D9D3C6;
@@ -1038,21 +1215,6 @@ textarea:focus-visible {
   color: var(--muted);
   font-size: 13px;
   margin: 0 0 20px
-}
-
-.filters {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-  margin: 24px 0
-}
-
-.filters label {
-  min-width: 190px;
-  display: grid;
-  gap: 5px;
-  color: var(--muted);
-  font-size: 13px
 }
 
 .seo-copy {
@@ -1912,48 +2074,6 @@ textarea:focus-visible {
   }
 }
 
-.checks {
-  display: flex;
-  gap: 18px;
-  flex-wrap: wrap;
-  margin: 0 0 18px
-}
-
-.checks label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  font-size: 14px;
-  color: var(--muted)
-}
-
-.checks input {
-  width: 18px;
-  height: 18px;
-  accent-color: var(--ink)
-}
-
-.pagination {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  margin: 32px 0
-}
-
-.pagination button:disabled {
-  opacity: .45;
-  cursor: not-allowed
-}
-
-.empty {
-  padding: 35px;
-  background: var(--cream);
-  border-radius: 14px;
-  color: var(--muted)
-}
-
 .brand {
   display: flex;
   align-items: center;
@@ -2122,7 +2242,7 @@ textarea:focus-visible {
 }
 
 .footer-grid {
-  grid-template-columns: 1.1fr 1.2fr 1fr 1fr
+  grid-template-columns: repeat(5, minmax(0, 1fr))
 }
 
 @media(max-width:900px) {
@@ -2381,17 +2501,27 @@ textarea:focus-visible {
 }
 
 .location-thumb {
+  position: relative;
   display: inline-block;
-  flex: 0 0 26px;
-  width: 26px;
-  height: 26px;
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
   border-radius: 50%;
   background-color: #E8DDC7;
-  background-size: cover;
-  background-position: center;
   border: 1px solid #fff;
   box-shadow: 0 1px 4px #392b1526;
   vertical-align: middle
+}
+
+.location-thumb img {
+  object-fit: cover;
+}
+
+.location-thumb-placeholder {
+  position: absolute;
+  inset: 0;
+  background: #e8e2d7;
 }
 
 .city>a {
@@ -2399,9 +2529,9 @@ textarea:focus-visible {
 }
 
 .city>a>.location-thumb {
-  width: 24px;
-  height: 24px;
-  flex-basis: 24px
+  width: 40px;
+  height: 40px;
+  flex-basis: 40px
 }
 
 .city>a>span:not(.location-thumb) {
@@ -2432,8 +2562,6 @@ textarea:focus-visible {
   border: 0;
   border-radius: inherit;
   box-shadow: none;
-  background-position: center;
-  background-size: cover;
   transition: transform .5s ease
 }
 
@@ -2685,9 +2813,9 @@ textarea:focus-visible {
 }
 
 .city>a>.location-thumb {
-  width: 27px;
-  height: 27px;
-  flex-basis: 27px
+  width: 40px;
+  height: 40px;
+  flex-basis: 40px
 }
 
 .city>a .city-name {
@@ -2754,13 +2882,6 @@ textarea:focus-visible {
 
 .vc:hover {
   transform: translateY(-2px)
-}
-
-.vc .ph {
-  height: 116px !important;
-  min-height: 0;
-  background-position: center;
-  background-size: cover
 }
 
 .vc strong {
@@ -2835,10 +2956,6 @@ textarea:focus-visible {
 
   .vg {
     gap: 9px
-  }
-
-  .vc .ph {
-    height: 100px !important
   }
 
   .chd h3 {
@@ -3040,6 +3157,11 @@ textarea:focus-visible {
   aspect-ratio: 4/3;
   border-radius: 11px 11px 0 0;
   background: #f1ece2
+}
+
+.vc-image .venue-card-image {
+  height: 100%;
+  aspect-ratio: auto;
 }
 
 .vc-image img {
